@@ -1,4 +1,4 @@
-function plotBendGMM(Mu, Sigma,color, display_mode)
+function plotBendGMM(Mu, Sigma,C,T,Q,color, display_mode)
 %
 % This function plots a representation of the components (means and 
 % covariance amtrices) of a Gaussian Mixture Model (GMM) or a
@@ -26,6 +26,7 @@ if display_mode==1
   for j=1:nbData
     stdev = sqrtm(3.0.*Sigma(:,:,j));
     X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
+    X=BendPoint(X,C(j),T(j,:),Q(:,:,j));
     patch(X(:,1), X(:,2), lightcolor, 'lineWidth', 2, 'EdgeColor', color);
     plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
   end

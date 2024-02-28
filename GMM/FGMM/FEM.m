@@ -1,4 +1,4 @@
-function [Priors, Mu, Sigma, Pix] = EM(Data, Priors0, Mu0, Sigma0)
+function [Priors, Mu, Sigma, Pix] = FEM(Data, Priors0, Mu0, Sigma0,C,T,Q)
 %
 % Expectation-Maximization estimation of GMM parameters.
 % This source code is the implementation of the algorithms described in 
