@@ -1,6 +1,8 @@
 function [gm,C,T,Q] = GenerateGMM(X, NumOfComponent)
-    [Pi, Mu, Sigma,C,T,Q] = FEM_init_kmeans(X', NumOfComponent);
-    % [Pi, Mu, Sigma] = FEM(X', Pi, Mu, Sigma,C,T,Q);
-    gm=gmdistribution(Mu', Sigma,Pi');
+    %Initialize
+    disp("EM算法开始");
+    [gm,C,T,Q] = FEM_init_kmeans(X', NumOfComponent);
+    [gm,C,T,Q] = FEM(X',gm,C,T,Q);
+    disp("EM算法结束");
 end
 

@@ -15,7 +15,7 @@ function plotBendGMM(Mu, Sigma,C,T,Q,color, display_mode)
 %   o display_mode: Display mode (1 is used for a GMM, 2 is used for a GMR
 %                   with a 2D representation and 3 is used for a GMR with a
 %                   1D representation).
-
+disp("开始绘图");
 nbData = size(Mu,2);
 lightcolor = color + [0.6,0.6,0.6];
 lightcolor(find(lightcolor>1.0)) = 1.0;
@@ -48,7 +48,7 @@ elseif display_mode==3
   plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color); 
 end
 
+disp("结束绘图");
 
-
-
+end
 

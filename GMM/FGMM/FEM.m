@@ -1,4 +1,4 @@
-function [Priors, Mu, Sigma, Pix] = FEM(Data, Priors0, Mu0, Sigma0,C,T,Q)
+function [gm,C,T,Q]= FEM(Data, gm,C,T,Q)
 %
 % Expectation-Maximization estimation of GMM parameters.
 % This source code is the implementation of the algorithms described in 
@@ -54,48 +54,79 @@ function [Priors, Mu, Sigma, Pix] = FEM(Data, Priors0, Mu0, Sigma0,C,T,Q)
 loglik_threshold = 1e-10;
 
 %% Initialization of the parameters
+Mu = gm.mu';
+Sigma = gm.Sigma;
+Priors = gm.ComponentProportion;
+
 [nbVar, nbData] = size(Data);
-nbStates = size(Sigma0,3);
+nbStates = size(Sigma,3);
 loglik_old = -realmax;
 nbStep = 0;
 
-Mu = Mu0;
-Sigma = Sigma0;
-Priors = Priors0;
+Pxi=zeros(nbData,nbVar);
+
+% 中间步数
+step=3;
+nbstep=0;
 
 %% EM fast matrix computation (see the commented code for a version 
 %% involving one-by-one computation, which is easier to understand)
 while 1
   %% E-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
+    % 把所有的点进行映射
+    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
     %Compute probability p(x|i)
-    Pxi(:,i) = gaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+     Pxi(:,i) = gaussPDF(NewData(1,:),0, Sigma(1,1,i))*gaussPDF(NewData(2,:),0, Sigma(2,2,i));
   end
   %Compute posterior probability p(i|x)
   Pix_tmp = repmat(Priors,[nbData 1]).*Pxi;
   Pix = Pix_tmp ./ repmat(sum(Pix_tmp,2),[1 nbStates]);
   %Compute cumulated posterior probability
   E = sum(Pix);
+
+  %% 更新CTQ
+  Data_id=cluster(gm,Data');
+  
   %% M-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
+    % 不更新没有样本点的类
+    if isempty(Data(:,Data_id==i))
+        break
+    end
+    % 把所有的点进行映射
+
+    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
+
+    %Update the CTQ
+    % Data=Data.*Pix(:,i)';
+    [C(i),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,Data_id==i)');
+
     %Update the priors
     Priors(i) = E(i) / nbData;
+
     %Update the centers
-    Mu(:,i) = Data*Pix(:,i) / E(i);
-    %Update the covariance matrices
-    Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
-    Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
-    %% Add a tiny variance to avoid numerical instability
-    Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+    Mu(:,i) = NewData*Pix(:,i) / E(i)+T(i,:)';
+
+    % %Update the covariance matrices
+    % Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
+    % Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
+    % 
+    % %% Add a tiny variance to avoid numerical instability
+    % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
   end
+ %% 更新模型数据
+ gm=gmdistribution(Mu', Sigma,Priors');
   %% Stopping criterion %%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
+    % 把所有的点进行映射
+    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
     %Compute the new probability p(x|i)
-    Pxi(:,i) = gaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+    Pxi(:,i) = gaussPDF(NewData(1,:),0, Sigma(1,1,i))*gaussPDF(NewData(2,:),0, Sigma(2,2,i));
   end
   %Compute the log likelihood
   F = Pxi*Priors';
-  F(find(F<realmin)) = realmin;
+  F(F<realmin) = realmin;
   loglik = mean(log(F));
   %Stop the process depending on the increase of the log likelihood 
   if abs((loglik/loglik_old)-1) < loglik_threshold
@@ -103,6 +134,15 @@ while 1
   end
   loglik_old = loglik;
   nbStep = nbStep+1;
+  
+  %% 中间过程监看
+  nbstep=nbstep+1;
+  if nbstep>=step
+    % 画图
+    FEMPlot(Data,gm,C,T,Q);
+    nbstep=0;
+  end
+
 end
 
 % %% EM slow one-by-one computation (better suited to understand the
@@ -154,3 +194,8 @@ for i=1:nbStates
   Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
 end
 
+gm=gmdistribution(Mu', Sigma,Priors');
+
+
+
+end

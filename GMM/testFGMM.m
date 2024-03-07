@@ -1,10 +1,15 @@
+ %% 添加路径
 clc
 clear
 close all
+addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
 addpath(genpath('.\FGMM')); % 高斯混合模型算法库
+addpath(genpath('.\PlotFunction')); % 绘图库
+addpath(genpath('.\Util'));% 工具库
+
 %% 加载数据
 numComponent = 8;
-img = rgb2gray(imread('input.jpg'));
+img = rgb2gray(imread('input.jpg')); 
 
 %% 图像预处理
 [img,data] = ImgProcess(img);
@@ -52,15 +57,26 @@ img = rgb2gray(imread('input.jpg'));
 % Data = (Data-T)*Q;
 [charGMM,C,T,Q]=GenerateGMM(data, numComponent);
 
-mu=charGMM.mu;
+% Data_id=cluster(charGMM,data);
+% NewData=zeros(size(data))';
+% for i=1:numComponent
+%     idtmp = find(Data_id==i);
+%     NewData(:,idtmp)= GetProjectionLength(data(idtmp,:)',C(i),T(i,:),Q(:,:,i)) ;
+% end
+
 
 figure;
 hold on
 plotBendGMM(charGMM.mu', charGMM.Sigma, C,T,Q,[0 .8 0], 1);
-gscatter(Data(:,1),Data(:,2));
+gscatter(data(:,1),data(:,2));
+% gscatter(NewData(1,:),NewData(2,:));
 axis equal
 hold off
 
 
-rmpath(genpath('.\FGMM')); % 高斯混合模型算法库
+%% 删除路径
+rmpath(genpath('.\FindCurve'));
+rmpath(genpath('.\FGMM'));
+rmpath(genpath('.\PlotFunction'));
+rmpath(genpath('.\Util'));
 %%END

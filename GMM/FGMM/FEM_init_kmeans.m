@@ -1,4 +1,4 @@
-function [Priors, Mu, Sigma,C,T,Q] = FEM_init_kmeans(Data, nbStates)
+function [gm,C,T,Q] = FEM_init_kmeans(Data, nbStates)
 %
 % This function initializes the parameters of a Gaussian Mixture Model 
 % (GMM) by using k-means clustering algorithm.
@@ -22,12 +22,9 @@ function [Priors, Mu, Sigma,C,T,Q] = FEM_init_kmeans(Data, nbStates)
 %     'kmeans_netlab.m' to avoid conflicts. 
 
 [nbVar, nbData] = size(Data);
-
-%Initialize
 C=zeros([nbStates,1]);
 T=zeros([nbStates,2]);
 Q=zeros([2,2,nbStates]);
-
 
 
 %Use of the 'kmeans' function from the MATLAB Statistics toolbox
@@ -43,5 +40,5 @@ for i=1:nbStates
   [C(i),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
 end
 Priors = Priors ./ sum(Priors);
-
-
+gm=gmdistribution(Mu', Sigma,Priors');
+end
