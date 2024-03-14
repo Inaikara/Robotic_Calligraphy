@@ -1,4 +1,4 @@
-function[rdata] = FindCurve(img_2bw,duan)
+function[rdata] = FindCurve(img_2bw,duan)%#codegen
 [imgw,imgh] = size(img_2bw);
 %imshow(img_2bw)
 img_thin = bwmorph(~img_2bw,'thin',Inf);
@@ -7,28 +7,28 @@ img_thin = bwmorph(~img_2bw,'thin',Inf);
 img_thin1 = img_thin;
 img_thin2 = img_thin;
 
-%% Ñ°ÕÒÇúÏß
+%% å¯»æ‰¾æ›²çº¿
 curve_name = 0;
 for start_j = 1:imgh
     for start_i = 1:imgw
 % for start_i = 1:imgw
 %     for start_j = 1:imgh
         if img_thin1(start_i,start_j) == 1
-            %% ÏÈ°ÑÆğÊ¼µãÉè¶¨ºÃ
+            %% å…ˆæŠŠèµ·å§‹ç‚¹è®¾å®šå¥½
             curve_name = curve_name + 1;
             name_1 = 1;
             direction_1 = [0 0];
             start_point = [start_i start_j];
-            [connect_point,point_num,sta_dir] = FindStaConnect(img_thin2,start_point);%µÃµ½ËùÓĞÁ¬½Óµã
-            [choose_point] = ChoosePoint(direction_1,connect_point);%Ñ¡ÔñÕıÈ·µÄµã
-            [direction_1] = Direction(choose_point,direction_1);%¸üĞÂ·½Ïò±í
-            direction_2 = [-direction_1(1) -direction_1(2)];%ÓÃÓÚ·´·½ÏòÑ°ÕÒÇúÏß
+            [connect_point,point_num,sta_dir] = FindStaConnect(img_thin2,start_point);%å¾—åˆ°æ‰€æœ‰è¿æ¥ç‚¹
+            [choose_point] = ChoosePoint(direction_1,connect_point);%é€‰æ‹©æ­£ç¡®çš„ç‚¹
+            [direction_1] = Direction(choose_point,direction_1);%æ›´æ–°æ–¹å‘è¡¨
+            direction_2 = [-direction_1(1) -direction_1(2)];%ç”¨äºåæ–¹å‘å¯»æ‰¾æ›²çº¿
             if point_num == 0
                 img_thin2(start_point(1),start_point(2)) = 0;
                 break
             end
             if point_num>1
-                black_flag = 0; %ÖÃºÚflag£¬0Îª²»ÖÃºÚ£¬1ÎªÖÃºÚ
+                black_flag = 0; %ç½®é»‘flagï¼Œ0ä¸ºä¸ç½®é»‘ï¼Œ1ä¸ºç½®é»‘
             else
                 black_flag = 1;
                 img_thin2(start_point(1),start_point(2)) = 0;
@@ -38,7 +38,7 @@ for start_j = 1:imgh
 %             eval(['curve',num2str(curve_name),'(name_1,:)','=','start_point',';']);
 %             name_1 = name_1+1;
             
-            %% ÕÒµÚ¶ş¸öµã
+            %% æ‰¾ç¬¬äºŒä¸ªç‚¹
             last_point = start_point;
             this_point = choose_point;
             flag_1 = 1;
@@ -47,8 +47,8 @@ for start_j = 1:imgh
                 [connect_point,point_num] = FindStaConnect(img_thin2,this_point);
                 [choose_point] = ChoosePoint(direction_1,connect_point);
                 [direction_1] = Direction(choose_point,direction_1);
-                if choose_point == [0 0 0] %Ã»ÕÒµ½¹æ¶¨·½ÏòÁ¬½Óµã£¬¿ÉÄÜÃ»ÓĞÁ¬½ÓµãÒ²¿ÉÄÜÓĞÁ¬½Óµã
-                    %ÍêÈ«Ã»ÓĞÁ¬½Óµã£¬ÖÃºÚ
+                if choose_point == [0 0 0] %æ²¡æ‰¾åˆ°è§„å®šæ–¹å‘è¿æ¥ç‚¹ï¼Œå¯èƒ½æ²¡æœ‰è¿æ¥ç‚¹ä¹Ÿå¯èƒ½æœ‰è¿æ¥ç‚¹
+                    %å®Œå…¨æ²¡æœ‰è¿æ¥ç‚¹ï¼Œç½®é»‘
                     if ((point_num == 0)&&(last_point(4) ==1)) || ((point_num == 1)&&(last_point(4) ==0))
                         img_thin1(this_point(1),this_point(2)) = 0;
                         img_thin2(this_point(1),this_point(2)) = 0;
@@ -56,7 +56,7 @@ for start_j = 1:imgh
                         eval(['curve',num2str(curve_name),'(name_1,:)','=','this_point',';']);
                         name_1 = name_1+1;
                         break
-                    %ÓĞÁ¬½Óµã£¬²»ÖÃºÚ
+                    %æœ‰è¿æ¥ç‚¹ï¼Œä¸ç½®é»‘
                     else
                         this_point(4) = 0;
                         img_thin1(this_point(1),this_point(2)) = 0;
@@ -64,8 +64,8 @@ for start_j = 1:imgh
                         name_1 = name_1+1;
                         break
                     end
-                else %ÓĞ¹æ¶¨·½ÏòÁ¬½ÓµãµÄÇé¿ö
-                    %Ö»ÓĞÒ»¸öÁ¬½Óµã£¬ÖÃºÚ
+                else %æœ‰è§„å®šæ–¹å‘è¿æ¥ç‚¹çš„æƒ…å†µ
+                    %åªæœ‰ä¸€ä¸ªè¿æ¥ç‚¹ï¼Œç½®é»‘
                     if ((last_point(4) == 1)&&(point_num==1)) || ((last_point(4) == 0)&&(point_num==2))
                         img_thin2(this_point(1),this_point(2)) = 0;
                         this_point(4) = 1;
@@ -80,7 +80,7 @@ for start_j = 1:imgh
                 end
             end
             
-            %% ·´·½ÏòÕÒµÚ¶ş¸öµã
+            %% åæ–¹å‘æ‰¾ç¬¬äºŒä¸ªç‚¹
             %if start_point(4) == 0
             %eval(['curve',num2str(curve_name),'=','[start_point;curve',num2str(curve_name),']',';']);
             %eval(['curve',num2str(curve_name),'(1,:)=[]',';']);
@@ -92,23 +92,23 @@ for start_j = 1:imgh
                 [connect_point,point_num] = FindStaConnect(img_thin2,this_point);
                 [choose_point] = ChoosePoint(direction_2,connect_point);
                 [direction_2] = Direction(choose_point,direction_2);
-                if choose_point == [0 0 0] %Ã»ÕÒµ½¹æ¶¨·½ÏòÁ¬½Óµã£¬¿ÉÄÜÃ»ÓĞÁ¬½ÓµãÒ²¿ÉÄÜÓĞÁ¬½Óµã
-                    %ÍêÈ«Ã»ÓĞÁ¬½Óµã£¬ÖÃºÚ
+                if choose_point == [0 0 0] %æ²¡æ‰¾åˆ°è§„å®šæ–¹å‘è¿æ¥ç‚¹ï¼Œå¯èƒ½æ²¡æœ‰è¿æ¥ç‚¹ä¹Ÿå¯èƒ½æœ‰è¿æ¥ç‚¹
+                    %å®Œå…¨æ²¡æœ‰è¿æ¥ç‚¹ï¼Œç½®é»‘
                     if ((point_num == 0)&&(last_point(4) ==1)) || ((point_num == 1)&&(last_point(4) ==0))
                         img_thin2(this_point(1),this_point(2)) = 0;
                         this_point(4) = 1;
                         img_thin1(this_point(1),this_point(2)) = 0;
                         eval(['curve',num2str(curve_name),'=','[this_point;curve',num2str(curve_name),']',';']);
                         break
-                    %ÓĞÁ¬½Óµã£¬²»ÖÃºÚ
+                    %æœ‰è¿æ¥ç‚¹ï¼Œä¸ç½®é»‘
                     else
                         this_point(4) = 0;
                         img_thin1(this_point(1),this_point(2)) = 0;
                         eval(['curve',num2str(curve_name),'=','[this_point;curve',num2str(curve_name),']',';']);
                         break
                     end
-                else %ÓĞ¹æ¶¨·½ÏòÁ¬½ÓµãµÄÇé¿ö
-                    %Ö»ÓĞÒ»¸öÁ¬½Óµã£¬ÖÃºÚ
+                else %æœ‰è§„å®šæ–¹å‘è¿æ¥ç‚¹çš„æƒ…å†µ
+                    %åªæœ‰ä¸€ä¸ªè¿æ¥ç‚¹ï¼Œç½®é»‘
                     if ((last_point(4) == 1)&&(point_num==1)) || ((last_point(4) == 0)&&(point_num==2))
                         img_thin2(this_point(1),this_point(2)) = 0;
                         this_point(4) = 1;
@@ -122,7 +122,7 @@ for start_j = 1:imgh
                 end
             end
             
-            %% °Ñ²»ÖÃºÚµÄÖĞ¼ä¼ĞÔÓµÄÖÃºÚµÄÔÙÖÃ°× ´Ë·½·¨²»ĞĞ£¬»¹ÊÇÍ¨¹ı¼ÓµãÖ±½ÓÆ´½Ó°É
+            %% æŠŠä¸ç½®é»‘çš„ä¸­é—´å¤¹æ‚çš„ç½®é»‘çš„å†ç½®ç™½ æ­¤æ–¹æ³•ä¸è¡Œï¼Œè¿˜æ˜¯é€šè¿‡åŠ ç‚¹ç›´æ¥æ‹¼æ¥å§
 %             eval(['cruve = ','curve',num2str(curve_name),';']);
 %             [m,~] = find(cruve(:,4)==0);
 %             [n,~] = size(m);
@@ -140,7 +140,7 @@ for start_j = 1:imgh
     end
 end
 
-%% µãÅÅĞò
+%% ç‚¹æ’åº
 for i = 1:curve_name
     eval(['paixu','=','curve',num2str(i),';']);
     [bihua] = Seq(paixu);
@@ -150,8 +150,8 @@ end
             
     
 
-%% ½«Í¬Ò»±Ê»­ÏàÁ¬
-idel = 0;%Ñ­»·ÖĞÒªÉ¾³ıµÄi
+%% å°†åŒä¸€ç¬”ç”»ç›¸è¿
+idel = 0;%å¾ªç¯ä¸­è¦åˆ é™¤çš„i
 n = 0;
 connect = [];
 for i = 1:curve_name
@@ -190,7 +190,7 @@ name_2 = 0;
 con_cur_num = 0;
 con_flag = 1;
 for i = 1:n
-    find_s = ismember(connect(i,1),connect(:,2)); %find_sÎª1±íÊ¾²»ÊÇÒ»¸ö±Ê»­µÄµÚÒ»¶Î
+    find_s = ismember(connect(i,1),connect(:,2)); %find_sä¸º1è¡¨ç¤ºä¸æ˜¯ä¸€ä¸ªç¬”ç”»çš„ç¬¬ä¸€æ®µ
     if find_s == 0
         con_1 = connect(i,2);
         name_2 = name_2 + 1;
@@ -210,7 +210,7 @@ for i = 1:n
     end
 end
 
-%% Ê£ÏÂµÄÔÙ·´¹ıÀ´ÅÅÁĞÒ»´Î
+%% å‰©ä¸‹çš„å†åè¿‡æ¥æ’åˆ—ä¸€æ¬¡
 na = name_2;
 del_num = 0;
 cruve_del = [];
@@ -274,7 +274,7 @@ end
 
 
 
-% %% »­Í¼
+% %% ç”»å›¾
 % figure(2)
 % %for i = 1:name_2
 % for i = 1:curve_name
@@ -302,7 +302,7 @@ end
 % imwrite(img_bihua,'a.png')
 
 
-%% ÕûÀíÊı¾İ
+%% æ•´ç†æ•°æ®
 
 rdata=[];
 for i = 1:name_2
