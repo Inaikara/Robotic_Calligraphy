@@ -20,10 +20,6 @@ y2 = Data(:,2);
 % Curve Parameters C
 C = pinv(y1'*y1)*y1'*y2;
 
-% Standardlise
-T = T+C(2);
-C=C(1);
-
 
 
 

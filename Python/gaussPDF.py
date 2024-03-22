@@ -26,7 +26,7 @@ def gene_gaussPDF(Data, theta, i):
     C_ = C[i]
     sigma_ = Sigma[:, :, i]
     # print(Q_, T_, 'Q_, T_')
-    Data_ = np.dot(Q_, Data - np.tile(T_, (Data.shape[1], 1)).T)
+    Data_ = np.dot(Q_, Data - np.tile(T_, (Data.shape[1], 1)).T) #Q*(x-T)
     # plt.scatter(Data[0,:], Data[1,:], c='blue')
     # plt.scatter(Data_[0,:], Data_[1,:], c='red')
     # plt.show()

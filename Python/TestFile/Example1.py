@@ -24,25 +24,25 @@ if __name__ == "__main__":
     # # Data[0,:] -= min_x
     # data = Data/100
 
-    # img = Image.open('jiu.png').convert('L')
-    # img_data = np.asarray(img)
-    # print(img_data.shape)
-    # k = 0
-    # data = []
-    # for i in range(0, img_data.shape[0]):
-    #     for j in range(0, img_data.shape[1]):
-    #         if img_data[i, j] == 0:
-    #             data.append([i, j])
-    #             k += 1
-    # data = np.array(data).T
+    img = Image.open('input.jpg').convert('L')
+    img_data = np.asarray(img)
+    print(img_data.shape)
+    k = 0
+    data = []
+    for i in range(0, img_data.shape[0]):
+        for j in range(0, img_data.shape[1]):
+            if img_data[i, j] == 0:
+                data.append([i, j])
+                k += 1
+    data = np.array(data).T
 
-    # Data = []
-    # for i in range(0, int(data.shape[1]/100)):
-    #     Data.append(data[:, i * 100])
-    # Data = np.array(Data).T
-    # data = Data
+    Data = []
+    for i in range(0, int(data.shape[1]/100)):
+        Data.append(data[:, i * 100])
+    Data = np.array(Data).T
+    data = Data
 
-    gmr = GMM_GMR(1)
+    gmr = GMM_GMR(4)
     gmr.fit(data)
     timeInput = np.linspace(1, np.max(data[0, :]), 100)
     gmr.predict(timeInput)
@@ -50,16 +50,17 @@ if __name__ == "__main__":
     print(gmr.Mu, 'Mu')
     print(gmr.Sigma, 'sigma')
     print(data_, 'data')
-    # fig = plt.figure()
+    fig = plt.figure()
 
-    # ax1 = fig.add_subplot(221)
-    # print(type(ax1))
-    # plt.title("Data")
-    # gmr.plot(ax=ax1, plotType="Data")
+    ax1 = fig.add_subplot(221)
+    print(type(ax1))
+    plt.title("Data")
+    gmr.plot(ax=ax1, plotType="Data")
 
-    # ax2 = fig.add_subplot(222)
-    # plt.title("Gaussian States")
-    # gmr.plot(ax=ax2, plotType="Clusters")
+    ax2 = fig.add_subplot(222)
+    plt.title("Gaussian States")
+    gmr.plot(ax=ax2, plotType="Clusters")
+    plt.show()
 
     # ax3 = fig.add_subplot(223)
     # plt.title("Regression")

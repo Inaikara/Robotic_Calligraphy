@@ -3,7 +3,7 @@ clc
 clear
 close all
 addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
-addpath(genpath('.\GMM')); % 高斯混合模型算法库
+addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 %% 参数设定
@@ -56,7 +56,7 @@ SoftStrokePlot(charGMM,data)
 
 %% 删除路径
 rmpath(genpath('.\FindCurve'));
-rmpath(genpath('.\GMM'));
+rmpath(genpath('.\FGMM'));
 rmpath(genpath('.\PlotFunction'));
 rmpath(genpath('.\UtilFunction'));
 

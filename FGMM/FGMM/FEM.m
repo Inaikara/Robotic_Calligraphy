@@ -1,4 +1,4 @@
-function [gm,C,T,Q]= FEM(Data, gm,C,T,Q)
+function [gm,C,T,Q] = FEM(Data, gm0,C,T,Q)
 %
 % Expectation-Maximization estimation of GMM parameters.
 % This source code is the implementation of the algorithms described in 
@@ -51,98 +51,107 @@ function [gm,C,T,Q]= FEM(Data, gm,C,T,Q)
 % }
 
 %% Criterion to stop the EM iterative update
-loglik_threshold = 1e-10;
+threshold_loglik = 1e-10;
+threshold_curve = 1e-5;
 
 %% Initialization of the parameters
-Mu = gm.mu';
-Sigma = gm.Sigma;
-Priors = gm.ComponentProportion;
-
 [nbVar, nbData] = size(Data);
-nbStates = size(Sigma,3);
+nbStates = size(gm0.Sigma,3);
 loglik_old = -realmax;
-nbStep = 0;
+nbStep = 0; %画图计数
 
-Pxi=zeros(nbData,nbVar);
 
-% 中间步数
-step=3;
-nbstep=0;
+Mu = gm0.mu';
+Sigma = gm0.Sigma;
+Priors = gm0.ComponentProportion;% alpha
+Pxi=zeros([nbData,nbStates]);% p(x|theta)
 
 %% EM fast matrix computation (see the commented code for a version 
 %% involving one-by-one computation, which is easier to understand)
 while 1
   %% E-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
-    % 把所有的点进行映射
-    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
     %Compute probability p(x|i)
-     Pxi(:,i) = gaussPDF(NewData(1,:),0, Sigma(1,1,i))*gaussPDF(NewData(2,:),0, Sigma(2,2,i));
+    if abs(C(i,1))>=threshold_curve
+        Pxi(:,i) = AcaGaussPDF(Data, Mu, Sigma,C,T,Q,i);
+    else
+        Pxi(:,i) = GaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+    end
   end
   %Compute posterior probability p(i|x)
   Pix_tmp = repmat(Priors,[nbData 1]).*Pxi;
-  Pix = Pix_tmp ./ repmat(sum(Pix_tmp,2),[1 nbStates]);
+  Pix = Pix_tmp ./ repmat(sum(Pix_tmp,2),[1 nbStates]);%w_it
   %Compute cumulated posterior probability
   E = sum(Pix);
 
-  %% 更新CTQ
-  Data_id=cluster(gm,Data');
-  
   %% M-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
-    % 不更新没有样本点的类
-    if isempty(Data(:,Data_id==i))
-        break
-    end
-    % 把所有的点进行映射
-
-    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
-
-    %Update the CTQ
-    % Data=Data.*Pix(:,i)';
-    [C(i),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,Data_id==i)');
-
+    NewData = Data2NewData(Data,C(i,:),T(i,:),Q(:,:,i));
     %Update the priors
     Priors(i) = E(i) / nbData;
+    %Updata the CQT
+    idtmp=Pix(:,i)>=0.5;
+    [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
+    if abs(C(i,1))>=threshold_curve
+        %% Update the centers
+        Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
+        % Mu(:,i) = Data*Pix(:,i) / E(i);
+        %% Update the covariance matrices
+        % 0
+        % Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
+        % Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
 
-    %Update the centers
-    Mu(:,i) = NewData*Pix(:,i) / E(i)+T(i,:)';
+        % 1
+        % Sigma1=NewData(1,:).*NewData(1,:)*Pix(:,i) / E(i);
+        % Sigma2=NewData(2,:).*NewData(2,:)*Pix(:,i) / E(i);
+        % Sigma(:,:,i)=Q(:,:,i)'*diag([Sigma1,Sigma2])*Q(:,:,i);
 
-    % %Update the covariance matrices
-    % Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
-    % Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
-    % 
-    % %% Add a tiny variance to avoid numerical instability
-    % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+        % 2
+        % Sigma(:,:,i)=cov(Data(1,idtmp),Data(2,idtmp));
+        Sigma(1,1,i)=abs(NewData(1,:).*NewData(1,:))*Pix(:,i) / E(i);
+        Sigma(2,2,i)=abs(NewData(2,:).*NewData(2,:))*Pix(:,i) / E(i);
+        Sigma(1,2,i)=0;
+        Sigma(2,1,i)=0;
+
+        %% Add a tiny variance to avoid numerical instability
+        Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+    else
+        %Update the centers
+        Mu(:,i) = Data*Pix(:,i) / E(i);
+        %Update the covariance matrices
+        Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
+        Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
+        %% Add a tiny variance to avoid numerical instability
+        Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+    end
   end
- %% 更新模型数据
- gm=gmdistribution(Mu', Sigma,Priors');
+    % %% Figure %%%%%%%%%%%%%%%%%%%%
+    % if nbStep>=20
+    %     nbStep=0;
+    %     gm=gmdistribution(Mu', Sigma,Priors');
+    %     FEMPlot(Data,gm,C,T,Q);
+    % end
   %% Stopping criterion %%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
-    % 把所有的点进行映射
-    NewData = GetProjectionLength(Data,C(i),T(i,:),Q(:,:,i));
     %Compute the new probability p(x|i)
-    Pxi(:,i) = gaussPDF(NewData(1,:),0, Sigma(1,1,i))*gaussPDF(NewData(2,:),0, Sigma(2,2,i));
+    if abs(C(i,1))>=threshold_curve
+        Pxi(:,i) = AcaGaussPDF(Data, Mu, Sigma,C,T,Q,i);
+    else
+        Pxi(:,i) = GaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+    end
   end
+
   %Compute the log likelihood
   F = Pxi*Priors';
   F(F<realmin) = realmin;
   loglik = mean(log(F));
   %Stop the process depending on the increase of the log likelihood 
-  if abs((loglik/loglik_old)-1) < loglik_threshold
+  if abs((loglik/loglik_old)-1) < threshold_loglik
     break;
   end
   loglik_old = loglik;
   nbStep = nbStep+1;
-  
-  %% 中间过程监看
-  nbstep=nbstep+1;
-  if nbstep>=step
-    % 画图
-    FEMPlot(Data,gm,C,T,Q);
-    nbstep=0;
-  end
-
+  disp(nbStep)
 end
 
 % %% EM slow one-by-one computation (better suited to understand the
@@ -195,7 +204,3 @@ for i=1:nbStates
 end
 
 gm=gmdistribution(Mu', Sigma,Priors');
-
-
-
-end

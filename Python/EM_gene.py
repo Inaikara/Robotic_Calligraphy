@@ -21,6 +21,7 @@ def EM(Data, theta, k, Data_id, bianjie, time):
     Pix = np.ndarray(shape = (nbStates, nbData))
     Pxi = np.ndarray(shape = (nbData, nbStates))
     while 1:
+        # Estep
         for i in range(0, nbStates):
             # print([Sigma[0,0,i], Sigma[0,1,i], Sigma[1,0,i], Sigma[1,1,i]],C,Q,T,'Sigma, C, Q, T' )
             if abs(C[i][0]) >= threshold:
@@ -32,6 +33,7 @@ def EM(Data, theta, k, Data_id, bianjie, time):
         Pix = np.divide(Pix_tmp,np.tile(np.reshape(np.sum(Pix_tmp,1), (nbData, 1)), (1, nbStates)))
         E = np.sum(Pix, 0)
         Priors = np.reshape(Priors, (nbStates))
+        # Mstep
         for i in range(0, nbStates):
             Priors[i] = E[i]/nbData
             P = np.array(Pix[:, i]).T
@@ -134,6 +136,7 @@ def EM(Data, theta, k, Data_id, bianjie, time):
                 f = np.dot(d,e)
                 Sigma[:,:,i] = f/E[i]
                 Sigma[:,:,i] = Sigma[:,:,i] + 0.00001 * np.diag(np.diag(np.ones((nbVar,nbVar))))
+        # Stop Criterion
         for i in range (0,nbStates):
             if abs(C[i][0]) >= threshold:
                 Pxi[:, i] = gene_gaussPDF(Data, [Mu, Sigma, C, Q, T, Priors], i)

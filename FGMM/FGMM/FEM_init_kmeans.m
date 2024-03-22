@@ -22,7 +22,7 @@ function [gm,C,T,Q] = FEM_init_kmeans(Data, nbStates)
 %     'kmeans_netlab.m' to avoid conflicts. 
 
 [nbVar, nbData] = size(Data);
-C=zeros([nbStates,1]);
+C=zeros([nbStates,2]);
 T=zeros([nbStates,2]);
 Q=zeros([2,2,nbStates]);
 
@@ -37,7 +37,7 @@ for i=1:nbStates
   Sigma(:,:,i) = cov([Data(:,idtmp) Data(:,idtmp)]');
   %Add a tiny variance to avoid numerical instability
   Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
-  [C(i),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
+  [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
 end
 Priors = Priors ./ sum(Priors);
 gm=gmdistribution(Mu', Sigma,Priors');

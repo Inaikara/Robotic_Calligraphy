@@ -1,4 +1,4 @@
-function prob = GaussPDF(Data, Mu, Sigma)
+function prob = AcaGaussPDF(Data, ~, Sigma,C,T,Q,i)
 %
 % This function computes the Probability Density Function (PDF) of a
 % multivariate Gaussian represented by means and covariance matrix.
@@ -15,8 +15,18 @@ function prob = GaussPDF(Data, Mu, Sigma)
 %   o prob:  1 x N array representing the probabilities for the 
 %            N datapoints.     
 
-[nbVar,nbData] = size(Data);
+% 对点进行映射
+NewData = Data2NewData(Data,C(i,:),T(i,:),Q(:,:,i));
 
-Data = Data' - repmat(Mu',nbData,1);
-prob = sum((Data*inv(Sigma)).*Data,2);
-prob = exp(-0.5*prob) / sqrt((2*pi)^nbVar * (abs(det(Sigma))+realmin));
+% 方差
+Sigma1=Sigma(1,1,i);
+Sigma2=Sigma(2,2,i);
+
+prob1=exp(-0.5*NewData(1,:).*NewData(1,:)/Sigma1) / sqrt((2*pi) * (abs(Sigma1)+realmin));
+prob2=exp(-0.5*NewData(2,:).*NewData(2,:)/Sigma2) / sqrt((2*pi) * (abs(Sigma2)+realmin));
+
+prob=(prob1.*prob2)';
+
+
+
+
