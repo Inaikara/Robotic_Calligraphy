@@ -1,4 +1,4 @@
-function[rdata] = FindCurve(img_2bw,duan)%#codegen
+function[rdata] = FindCurve(img_2bw,duan)
 [imgw,imgh] = size(img_2bw);
 %imshow(img_2bw)
 img_thin = bwmorph(~img_2bw,'thin',Inf);

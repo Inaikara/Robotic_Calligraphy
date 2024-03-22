@@ -95,24 +95,11 @@ while 1
     if abs(C(i,1))>=threshold_curve
         %% Update the centers
         Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
-        % Mu(:,i) = Data*Pix(:,i) / E(i);
         %% Update the covariance matrices
-        % 0
-        % Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
-        % Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
-
-        % 1
-        % Sigma1=NewData(1,:).*NewData(1,:)*Pix(:,i) / E(i);
-        % Sigma2=NewData(2,:).*NewData(2,:)*Pix(:,i) / E(i);
-        % Sigma(:,:,i)=Q(:,:,i)'*diag([Sigma1,Sigma2])*Q(:,:,i);
-
-        % 2
-        % Sigma(:,:,i)=cov(Data(1,idtmp),Data(2,idtmp));
         Sigma(1,1,i)=abs(NewData(1,:).*NewData(1,:))*Pix(:,i) / E(i);
         Sigma(2,2,i)=abs(NewData(2,:).*NewData(2,:))*Pix(:,i) / E(i);
         Sigma(1,2,i)=0;
         Sigma(2,1,i)=0;
-
         %% Add a tiny variance to avoid numerical instability
         Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
     else
@@ -126,6 +113,7 @@ while 1
     end
   end
     % %% Figure %%%%%%%%%%%%%%%%%%%%
+    % nbStep = nbStep+1;
     % if nbStep>=20
     %     nbStep=0;
     %     gm=gmdistribution(Mu', Sigma,Priors');
@@ -149,9 +137,8 @@ while 1
   if abs((loglik/loglik_old)-1) < threshold_loglik
     break;
   end
+  disp(threshold_loglik/abs((loglik/loglik_old)-1))
   loglik_old = loglik;
-  nbStep = nbStep+1;
-  disp(nbStep)
 end
 
 % %% EM slow one-by-one computation (better suited to understand the
@@ -200,7 +187,7 @@ end
 
 %% Add a tiny variance to avoid numerical instability
 for i=1:nbStates
+  Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
   Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
 end
-
 gm=gmdistribution(Mu', Sigma,Priors');

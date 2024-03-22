@@ -8,14 +8,14 @@ addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 %% 参数设定
 step=1000;
-numComponent = 8;
+numComponent = 7;
 img = rgb2gray(imread('input.jpg'));
 
 %% 图像预处理
 [img,data] = ImgProcess(img);
 
 %% GMM参数估计
-charGMM=GenerateGMM(data, numComponent);
+[charGMM,C,T,Q]=GenerateGMM(data, numComponent);
 
 %% 硬笔笔画提取
 stroke=FindCurve(img,5);
@@ -31,15 +31,14 @@ stroke = StrokeOptimize(stroke);
 % 时间列3，笔画列4
 data = AddTime(data,stroke,componentOrder);
 
+%% 笔画画图
+% 硬笔笔画
+HardStrokePlot(charGMM,C,T,Q,stroke)
+% 软笔笔画
+SoftStrokePlot(charGMM,C,T,Q,data)
+
 %% GMR回归
 trajectory = GetTrajectory(data,componentOrder,step);
-
-%% 笔画画图
-% % 硬笔笔画
-% HardStrokePlot(charGMM,stroke)
-% 
-% 软笔笔画
-SoftStrokePlot(charGMM,data)
 
 %% 数据处理
 [trajectory,data] = TrajectoryProcess(trajectory,data);

@@ -5,11 +5,7 @@ function [] = FEMPlot(Data,gm,C,T,Q)
 disp("start painting")
 figure;
 hold on
-SigmaPlot=gm.Sigma;
-for i=1:gm.NumComponents
-    SigmaPlot(:,:,i)=Q(:,:,i)'*gm.Sigma(:,:,i)*Q(:,:,i);
-end
-plotBendGMM(gm.mu', SigmaPlot, C,T,Q,[rand(),rand(),rand()], 1);
+plotBendGMM(gm, C,T,Q,[rand(),rand(),rand()], 1);
 gscatter(Data(1,:),Data(2,:));
 axis equal
 hold off
