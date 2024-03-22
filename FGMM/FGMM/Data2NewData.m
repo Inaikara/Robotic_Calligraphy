@@ -1,6 +1,8 @@
-function NewData = GetProjectionLength(Data,C,T,Q)
+function NewData = Data2NewData(Data,C,T,Q)
 %GETPROJECTIONLENGTH 输入行数据和CTQ矩阵，得到变换后新的数据
 Data=Data';% 转变为列数据
+
+% 坐标变换
 T=repmat(T,[size(Data,1),1]);
 Data = (Data-T)*Q;
 NewData=zeros(size(Data));
