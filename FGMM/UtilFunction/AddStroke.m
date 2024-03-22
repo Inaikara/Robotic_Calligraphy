@@ -9,7 +9,7 @@ function [data,stroke,componentOrder]= AddStroke(data,stroke,charGMM)
         maxStrokeNum=0;
         for j=1:length(componentIdx)           
             strokeType=stroke2ComponentList(componentIdx(j),1);
-            strokeNum=length(find(stroke(:,[3,4])==[strokeType,componentType]));
+            strokeNum=length(find(stroke(:,3)==strokeType&stroke(:,4)==componentType))/length(find(stroke(:,3)==strokeType));
             if(strokeNum>maxStrokeNum)
                 stroke2Component(componentType,:)=[strokeType,componentType];
                 maxStrokeNum=strokeNum;
