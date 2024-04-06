@@ -69,7 +69,7 @@ while 1
   %% E-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
     %Compute probability p(x|i)
-    Pxi(:,i) = gaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+    Pxi(:,i) = GaussPDF(Data, Mu(:,i), Sigma(:,:,i));
   end
   %Compute posterior probability p(i|x)
   Pix_tmp = repmat(Priors,[nbData 1]).*Pxi;
@@ -91,7 +91,7 @@ while 1
   %% Stopping criterion %%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
     %Compute the new probability p(x|i)
-    Pxi(:,i) = gaussPDF(Data, Mu(:,i), Sigma(:,:,i));
+    Pxi(:,i) = GaussPDF(Data, Mu(:,i), Sigma(:,:,i));
   end
   %Compute the log likelihood
   F = Pxi*Priors';

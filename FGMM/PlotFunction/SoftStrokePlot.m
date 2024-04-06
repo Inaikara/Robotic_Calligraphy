@@ -1,4 +1,4 @@
-function [ ] = SoftStrokePlot(charGMM,C,T,Q,data)
+function [ ] = SoftStrokePlot(charGMM,data,C,T,Q)
 %SOFTPLOT 画出毛笔算法生成的笔画分割
 %   此处显示详细说明
 figure;

@@ -1,3 +1,5 @@
+%% 说明
+% 修改AddTime和GenerateGMM至AddFTime和GenerateFGMM可以切换模式
 %% 添加路径
 clc
 clear
@@ -27,39 +29,15 @@ stroke = StrokeOptimize(stroke);
 % 成分列3，笔画列4
 [data,stroke,componentOrder]= AddStroke(data,stroke,charGMM);
 
-%% 时序提取
-% 时间列3，笔画列4
-data = AddTime(data,stroke,componentOrder,C,Q,T);
+%% 硬笔笔画
+HardStrokePlot(charGMM,stroke,C,T,Q)
 
-%% 笔画画图
-% % 硬笔笔画
-% HardStrokePlot(charGMM,C,T,Q,stroke)
-% 软笔笔画
-SoftStrokePlot(charGMM,C,T,Q,data)
-
-%% GMR回归
-trajectory = GetTrajectory(data,componentOrder,step);
-
-%% 数据处理
-[trajectory,data] = TrajectoryProcess(trajectory,data);
-
-%% 轨迹画图
-% % 二维轨迹
-% Traj2DPlot(data,componentOrder,trajectory)
-% 
-% 三维轨迹
-Traj3DPlot(data,componentOrder,trajectory)
-% 
-% 模拟书写
-TrajSmPlot(step,trajectory)
+%% 软笔笔画
+SoftStrokePlot(charGMM,data,C,T,Q)
 
 %% 删除路径
 rmpath(genpath('.\FindCurve'));
 rmpath(genpath('.\FGMM'));
 rmpath(genpath('.\PlotFunction'));
 rmpath(genpath('.\UtilFunction'));
-
-%% 保存数据
-save('output.mat','trajectory');
-
 %% END

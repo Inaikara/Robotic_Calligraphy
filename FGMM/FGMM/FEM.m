@@ -52,7 +52,8 @@ function [gm,C,T,Q] = FEM(Data, gm0,C,T,Q)
 
 %% Criterion to stop the EM iterative update
 threshold_loglik = 1e-10;
-threshold_curve = 1e-5;
+threshold_curve = 1e-3;
+threshold_prob=0.5;
 
 %% Initialization of the parameters
 [nbVar, nbData] = size(Data);
@@ -90,26 +91,27 @@ while 1
     %Update the priors
     Priors(i) = E(i) / nbData;
     %Updata the CQT
-    idtmp=Pix(:,i)>=0.5;
+    idtmp=Pix(:,i)>=threshold_prob;
     [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
     if abs(C(i,1))>=threshold_curve
         %% Update the centers
-        Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
+        % Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
+        Mu(:,i) = Data*Pix(:,i) / E(i);
         %% Update the covariance matrices
         Sigma(1,1,i)=abs(NewData(1,:).*NewData(1,:))*Pix(:,i) / E(i);
         Sigma(2,2,i)=abs(NewData(2,:).*NewData(2,:))*Pix(:,i) / E(i);
         Sigma(1,2,i)=0;
         Sigma(2,1,i)=0;
-        %% Add a tiny variance to avoid numerical instability
-        Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+        % %% Add a tiny variance to avoid numerical instability
+        % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
     else
         %Update the centers
         Mu(:,i) = Data*Pix(:,i) / E(i);
         %Update the covariance matrices
         Data_tmp1 = Data - repmat(Mu(:,i),1,nbData);
         Sigma(:,:,i) = (repmat(Pix(:,i)',nbVar, 1) .* Data_tmp1*Data_tmp1') / E(i);
-        %% Add a tiny variance to avoid numerical instability
-        Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+        % %% Add a tiny variance to avoid numerical instability
+        % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
     end
   end
     % %% Figure %%%%%%%%%%%%%%%%%%%%
@@ -137,7 +139,8 @@ while 1
   if abs((loglik/loglik_old)-1) < threshold_loglik
     break;
   end
-  disp(threshold_loglik/abs((loglik/loglik_old)-1))
+  disp(loglik)
+  % disp(threshold_loglik/abs((loglik/loglik_old)-1))
   loglik_old = loglik;
 end
 
@@ -187,7 +190,14 @@ end
 
 %% Add a tiny variance to avoid numerical instability
 for i=1:nbStates
-  Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
-  Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+    if abs(C(i,1))>=threshold_curve    
+      Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
+      % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+    else
+    %Updata the CQT
+    idtmp=Pix(:,i)>=threshold_prob;
+    [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
+    % Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
+    end
 end
 gm=gmdistribution(Mu', Sigma,Priors');

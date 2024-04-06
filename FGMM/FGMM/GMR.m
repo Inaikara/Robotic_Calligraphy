@@ -64,7 +64,7 @@ nbStates = size(Sigma,3);
 %% Compute the influence of each GMM component, given input x
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=1:nbStates
-  Pxi(:,i) = Priors(i).*gaussPDF(x, Mu(in,i), Sigma(in,in,i));
+  Pxi(:,i) = Priors(i).*GaussPDF(x, Mu(in,i), Sigma(in,in,i));
 end
 beta = Pxi./repmat(sum(Pxi,2)+realmin,1,nbStates);
 %% Compute expected means y, given input x

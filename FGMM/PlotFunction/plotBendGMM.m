@@ -23,12 +23,14 @@ lightcolor = color + [0.6,0.6,0.6];
 lightcolor(lightcolor>1.0) = 1.0;
 
 if display_mode==1
-  nbDrawingSeg = 20;
+  nbDrawingSeg = 40;
   t = linspace(-pi, pi, nbDrawingSeg)';
   for j=1:nbData
     stdev = sqrtm(3.0.*Sigma(:,:,j));
     X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
-    X=BendPoint(X,C(j,:),T(j,:),Q(:,:,j));
+    if abs(C(j,:))>=1e-5
+        X=BendPoint(X,C(j,:),T(j,:),Q(:,:,j));
+    end
     patch(X(:,1), X(:,2), lightcolor, 'lineWidth', 2, 'EdgeColor', color,'FaceAlpha',.3,'EdgeAlpha',.3);
     plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
   end

@@ -1,5 +1,5 @@
 function [strokeNew] = StrokeOptimize(stroke)
-    %% ÓÅ»¯±Ê»­ÊéĞ´Ë³Ğò
+    %% ä¼˜åŒ–ç¬”ç”»ä¹¦å†™é¡ºåº
     strokeType=unique(stroke(:,3));
     for i=1:length(strokeType)
         strokeType0=strokeType(i);
@@ -11,8 +11,7 @@ function [strokeNew] = StrokeOptimize(stroke)
             stroke(stroke(:,3)==strokeType0,[1,2])=stroke0;
         end
     end
-
-    %% ÓÅ»¯Íä¹³±Ê»­
+    %% ä¼˜åŒ–å¼¯é’©ç¬”ç”»
     strokeNew=stroke;  
     for i=1:(length(strokeType)-1)
         strokeType1=strokeType(i);
