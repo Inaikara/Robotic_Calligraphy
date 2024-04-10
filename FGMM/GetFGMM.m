@@ -10,8 +10,19 @@ addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 %% 参数设定
 step=1000;
-numComponent = 7;
-img = rgb2gray(imread('input.jpg'));
+
+%% 不同字体
+% 水
+% numComponent = 7;
+% img = rgb2gray(imread('input.jpg'));
+
+% % 上 
+% numComponent = 5;
+% img = rgb2gray(imread('./sample/上.jpg'));
+
+% 下
+numComponent = 4;
+img = rgb2gray(imread('./sample/下.jpg'));
 
 %% 图像预处理
 [img,data] = ImgProcess(img);
