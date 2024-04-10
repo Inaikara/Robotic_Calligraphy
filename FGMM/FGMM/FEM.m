@@ -87,19 +87,22 @@ while 1
 
   %% M-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i=1:nbStates
-    NewData = Data2NewData(Data,C(i,:),T(i,:),Q(:,:,i));
-    %Update the priors
+    
+    %% Update the priors
     Priors(i) = E(i) / nbData;
-    %Updata the CQT
-    idtmp=Pix(:,i)>=threshold_prob;
-    [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
     if abs(C(i,1))>=threshold_curve
+        %% Updata the CQT
+        idtmp=Pix(:,i)>=threshold_prob;
+        [C(i,:),T(i,:),Q(:,:,i)] = PCA2LSFM(Data(:,idtmp)');
+        NewData = Data2NewData(Data,C(i,:),T(i,:),Q(:,:,i));
         %% Update the centers
-        % Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
-        Mu(:,i) = Data*Pix(:,i) / E(i);
+        Mu(:,i) = NewData*Pix(:,i) / E(i)+Q(:,:,i)'*[0,C(i,2)]'+T(i,:)';
+        % Mu(:,i) = Data*Pix(:,i) / E(i);
         %% Update the covariance matrices
         Sigma(1,1,i)=abs(NewData(1,:).*NewData(1,:))*Pix(:,i) / E(i);
         Sigma(2,2,i)=abs(NewData(2,:).*NewData(2,:))*Pix(:,i) / E(i);
+        % Sigma(1,1,i)=abs(NewData(1,:).*NewData(1,:))*Pxi(:,i) / nbData;
+        % Sigma(2,2,i)=abs(NewData(2,:).*NewData(2,:))*Pxi(:,i) / nbData;
         Sigma(1,2,i)=0;
         Sigma(2,1,i)=0;
         % %% Add a tiny variance to avoid numerical instability
@@ -114,6 +117,7 @@ while 1
         % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
     end
   end
+
     % %% Figure %%%%%%%%%%%%%%%%%%%%
     % nbStep = nbStep+1;
     % if nbStep>=20
@@ -135,13 +139,14 @@ while 1
   F = Pxi*Priors';
   F(F<realmin) = realmin;
   loglik = mean(log(F));
-  %Stop the process depending on the increase of the log likelihood 
+  %% Stop the process depending on the increase of the log likelihood 
   if abs((loglik/loglik_old)-1) < threshold_loglik
     break;
   end
-  disp(loglik)
-  % disp(threshold_loglik/abs((loglik/loglik_old)-1))
   loglik_old = loglik;
+
+  %% 打印似然度  
+  disp(loglik)
 end
 
 % %% EM slow one-by-one computation (better suited to understand the
@@ -191,8 +196,7 @@ end
 %% Add a tiny variance to avoid numerical instability
 for i=1:nbStates
     if abs(C(i,1))>=threshold_curve    
-      Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
-      % Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
+      Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);      
     else
     %Updata the CQT
     idtmp=Pix(:,i)>=threshold_prob;
@@ -200,4 +204,5 @@ for i=1:nbStates
     % Sigma(:,:,i)=Q(:,:,i)'*Sigma(:,:,i)*Q(:,:,i);
     end
 end
+Sigma(:,:,i) = Sigma(:,:,i) + 1E-5.*diag(ones(nbVar,1));
 gm=gmdistribution(Mu', Sigma,Priors');

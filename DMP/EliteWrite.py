@@ -23,9 +23,9 @@ def startElite():
     return my_elt
 
 
-def moveSlow(position, d):
+def moveSlow(position, strokeAngle):
+    # position[5] = np.rad2deg(strokeAngle)
     joint_angles = my_elt.inverseKinematic(position)
-    # joint_angles[5] = np.rad2deg(d)
     my_elt.moveByLine(joint_angles, 0, 50, 5, 5)
     while True:
         if my_elt.getRobotState() == 0:
@@ -33,6 +33,7 @@ def moveSlow(position, d):
 
 
 def move(position, strokeAngle):
+    # position[5] = np.rad2deg(strokeAngle)
     joint_angles = my_elt.inverseKinematic(position)
     # joint_angles[5] = np.rad2deg(strokeAngle)
     ret = my_elt.ttPutServoJointToBuf(joint_angles)
@@ -49,17 +50,6 @@ def transInit():
     current_joint_angle = my_elt.getRobotPos()
     ret = my_elt.ttPutServoJointToBuf(current_joint_angle)
 
-
-def getNewPoint(point, z_c=150 - 1 - 1):
-    x_c = -420
-    y_c = -60
-    point[0] += x_c
-    point[1] += y_c
-    point[2] += z_c
-    point = np.append(point, [-3.14, 0, 0])
-    return point.tolist()
-
-
 def getNewAngle(direct):
     direct = direct / np.linalg.norm(direct)
     baseDirect = np.array([0, 1])
@@ -72,12 +62,39 @@ def getNewAngle(direct):
     d = np.arctan2(cosd, sind)
     return d
 
+#242F
+#244
+def getNewPoint(point, z_c=240):
+    # -420
+    x_c = -420
+    # -60
+    y_c = -180
+    # test
+    point[0] = -point[0]
+    point[1] = -point[1]
+
+    point[0] += x_c
+    point[1] += y_c
+    point[2] += z_c
+    point = np.append(point, [-3.14, 0, 0])
+    return point.tolist()
 
 if __name__ == "__main__":
     # 导入数据
-    data = "../sample/trajectory_cun.mat"
+    # # 水
+    # data = "./水FGMM.mat"
+    # strokeOrder=[1, 0, 3, 2]
+
+    # 上
+    data = "./寸.mat"
+    strokeOrder=[0, 1, 2]   
+
+    # # 下
+    # data = "./下.mat"
+    # strokeOrder=[0, 1, 2]   
+
     # DMP泛化
-    track, numStroke, numStep = DmpCalculate(data, [0.8, 0.8], 0.22)
+    track, numStroke, numStep = DmpCalculate(data, [0.8, 0.8], 0.2)
 
     # 初始化艾利特
     my_elt = startElite()
@@ -88,7 +105,7 @@ if __name__ == "__main__":
     # shang
     # for i in [1,-2,0]:
     # cun
-    for i in [0, 2, 1]:
+    for i in strokeOrder:
         # for i in range(numStroke):
         # 计算笔画角度
         print(i)
@@ -98,15 +115,15 @@ if __name__ == "__main__":
         moveDir = np.sign(i)
 
         # 移动到笔画起点
-        startPoint = getNewPoint(track[i * 3 : i * 3 + 3, 0], 200)
+        startPoint = getNewPoint(track[i * 3 : i * 3 + 3, 0], 300)
         moveSlow(startPoint, strokeAngle)
 
         # 初始化透传
         transInit()
 
         # 移动每一步
-        if moveDir > 0:
-            for j in range(1, numStep - 20):
+        if moveDir >= 0:
+            for j in range(1, numStep - 2):
                 movePoint = getNewPoint(track[i * 3 : i * 3 + 3, j])
                 move(movePoint, strokeAngle)
         else:
@@ -115,7 +132,9 @@ if __name__ == "__main__":
                 move(movePoint, strokeAngle)
 
         # 移动到笔画终点
-        endPoint = getNewPoint(track[i * 3 : i * 3 + 3, -1], 200)
+        endPoint = getNewPoint(track[i * 3 : i * 3 + 3, -1], 300)
         move(endPoint, strokeAngle)
-
+    # 移动到笔画起点
+    startPoint = getNewPoint([0,0,0], 300)
+    moveSlow(startPoint, strokeAngle)
     # test ssh

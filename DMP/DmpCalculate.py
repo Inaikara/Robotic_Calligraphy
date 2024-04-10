@@ -44,12 +44,13 @@ def DmpCalculate(data, ratio=[1.0, 1.0], thickness=1.0):
 
 if __name__ == "__main__":
     # import data
-    data = "../sample/trajectory_shui.mat"
-    data = scio.loadmat(data)
-    trajectory = data["trajectory"]  # location info
+    data = "./output.mat"
 
     # calculate
     track, numStroke, numStep = DmpCalculate(data, [1, 1], 0.5)
+
+    data = scio.loadmat(data)
+    trajectory = data["trajectory"]  # location info
 
     # plot track in xy
     plt.figure(figsize=(6, 4))

@@ -103,6 +103,7 @@ while 1
   end
   loglik_old = loglik;
   nbStep = nbStep+1;
+  disp(loglik)
 end
 
 % %% EM slow one-by-one computation (better suited to understand the

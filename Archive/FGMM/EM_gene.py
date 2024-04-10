@@ -153,6 +153,7 @@ def EM(Data, theta, k, Data_id, bianjie, time):
         print(np.absolute((loglik/loglik_old)-1), 'np.absolute((loglik/loglik_old)-1)')
         if np.absolute((loglik/loglik_old)-1)<loglik_threshold:
             break
+        print(loglik,'loglik')
         loglik_old = loglik
         nbStep = nbStep+1
         print(nbStep, 'nbstep')

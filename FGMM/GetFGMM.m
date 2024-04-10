@@ -13,16 +13,16 @@ step=1000;
 
 %% 不同字体
 % 水
-% numComponent = 7;
-% img = rgb2gray(imread('input.jpg'));
+numComponent = 7;
+img = rgb2gray(imread('./Result/水.jpg'));
 
 % % 上 
 % numComponent = 5;
-% img = rgb2gray(imread('./sample/上.jpg'));
+% img = rgb2gray(imread('./Result/上.jpg'));
 
-% 下
-numComponent = 4;
-img = rgb2gray(imread('./sample/下.jpg'));
+% % 下
+% numComponent = 4;
+% img = rgb2gray(imread('./Result/下.jpg'));
 
 %% 图像预处理
 [img,data] = ImgProcess(img);
