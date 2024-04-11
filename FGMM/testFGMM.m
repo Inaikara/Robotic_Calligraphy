@@ -43,6 +43,12 @@ end
 [charGMM,C,T,Q]=GenerateFGMM(data', numComponent);
 
 %% GMR
+
+
+
+
+
+
 %% 画图
 figure;
 hold on
