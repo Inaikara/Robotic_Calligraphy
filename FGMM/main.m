@@ -1,17 +1,18 @@
 %% 说明
 % LASA数据集测试用
-%% 添加路径
 clc
 clear
 close all
+%% 添加路径
 addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
 addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
-
 %% 选择数据集
-n=3;
-numComponent = 4;
+n=13;
+type=2;
+numComponent = 2;
+step=10000;
 %% 加载数据
 names = {'Angle','BendedLine','CShape','DoubleBendedLine','GShape',...
          'heee','JShape','JShape_2','Khamesh','Leaf_1',...
@@ -32,35 +33,40 @@ end
 
 data=[];
 for i=1:length(demos)
-    data=[data,demos{i}.pos];
+    data=[data;demos{i}.pos'];
 end
 
-% % 数据画图
-% figure
-% plot(data(1,:),data(2,:),'x')
+%% 先验数据
+directdata=demos{i}.pos';
 
-%% FGMM参数估计
-[charGMM,C,T,Q]=GenerateFGMM(data', numComponent);
+%% 转变为非自治系统
+[data,charGMM,C,T,Q] = ADS2NADS(data,directdata,numComponent,type);
 
-%% GMR
+%% GMR回归
+[trajectory,trajsigma,trajthick] = GetGMRTraj(data,numComponent,step);
 
-
-
-
-
-
-%% 画图
+%% 画图GMM
 figure;
 hold on
 plotBendGMM(charGMM,C,T,Q, [0 .8 0], 1);
-gscatter(data(1,:),data(2,:));
+gscatter(data(:,1),data(:,2),data(:,3));
 hold off
 
-%% 删除路径
-rmpath(genpath('.\FindCurve'));
-rmpath(genpath('.\FGMM'));
-rmpath(genpath('.\PlotFunction'));
-rmpath(genpath('.\UtilFunction'));
+%% 画图GMR
+figure
+hold on
+plotGMM(trajectory, trajsigma,[0 0 .8], 2)
+gscatter(data(:,1),data(:,2));
+hold off
+
+%% 画图GMR
+figure
+hold on
+plotGMM(trajectory, trajthick,[0 0 .8], 2)
+gscatter(data(:,1),data(:,2));
+hold off
+
+
 %% END
 
 

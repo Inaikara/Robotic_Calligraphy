@@ -8,7 +8,7 @@ for n=1:size(trajectory,1)/3
     for k=1:step
         i = trajectory(n*3-2,k) * cos(t) + trajectory(n*3-1,k);
         j = trajectory(n*3-2,k) * sin(t) + trajectory(n*3,k);
-        patch(i, j, 'white','LineStyle', 'none'); %// plot filled circle with transparency
+        patch(i, j, 'black','LineStyle', 'none'); %// plot filled circle with transparency
     end
 end
 hold off

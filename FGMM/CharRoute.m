@@ -8,7 +8,7 @@ addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 
 %% 加载FGMM数据
-load ./Result/下FGMM.mat
+load ./Result/水FGMM.mat
 
 %% 硬笔笔画
 HardStrokePlot(charGMM,stroke,C,T,Q)
@@ -40,13 +40,25 @@ trajectory = GetTrajectory(data,componentOrder,step);
 [trajectory,data] = TrajectoryProcess(trajectory,data);
 
 %% 轨迹画图
+figure
+hold on
+trajsigma=zeros(2,2,step);
+for i=1:3:size(trajectory,1)
+    trajsigma(1,1,:)=trajectory(i,:);
+    trajsigma(2,2,:)=trajectory(i,:);
+    plotGMM(trajectory([i+1,i+2],:), trajsigma,[0 0 .8], 2)
+end
+hold off
+
+
+%% 轨迹画图
 % 二维轨迹
 Traj2DPlot(data,componentOrder,trajectory)
 % 
 % 三维轨迹
 Traj3DPlot(data,componentOrder,trajectory)
 % 
-% 模拟书写
+%% 模拟书写
 TrajSmPlot(step,trajectory)
 
 %% 保存数据
