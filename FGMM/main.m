@@ -11,7 +11,7 @@ addpath(genpath('.\UtilFunction'));% 工具库
 %% 选择数据集
 n=13;
 type=2;
-numComponent = 2;
+numComponent = 4;
 step=10000;
 %% 加载数据
 names = {'Angle','BendedLine','CShape','DoubleBendedLine','GShape',...

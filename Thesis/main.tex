@@ -9,7 +9,6 @@
 \usepackage{url}
 \usepackage{verbatim}
 \usepackage{graphicx}
-\usepackage{ctex}
 \usepackage{cite}
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 % updated with editorial comments 8/9/2021
@@ -38,19 +37,30 @@
 
 \end{IEEEkeywords}
 
-\section{引言}
-\IEEEPARstart{T}{his} is a citation test. To live or not to live, it is a question\cite{Ju2012,Zhang2005}. The main contributions of this article are listed as follows.
+\section{Introduction}
+\IEEEPARstart{T}{he} main contributions of this article are listed as follows. \cite{Ju2012}.
 
-本文的主要贡献如下:
+1) We propose a learning method based on DMP and FGMM which can not only learn the trajectory from multiple demonstrations but also learn the deviation among them.
 
-1) 设计了一种基于FGMM的改进GMR方法，可以更好的学习示教数据中的离散度信息。
+2) We present a new LfD method which can demonstrate by single static image, each sample point on the image is encoded by a prior trajectory and FGMM. Skills are then learned through the proposed methods
 
-2) 设计了
+3) We give a method for generating a priori trajectories of Chinese characters, and design a robot learning framework for learning to write. Experiments were carried out on the LASA dataset and Chinese character images to verify the effectiveness of the method.
+
+\section{Learning the trajectory and deviation \\from multiple demonstrations}
+Here
+\subsection{Fuzzy Gaussian Mixture Model}
 
 
-\section{方法}
+
+\subsection{Dynamic Motion Primitives}
+
+\section{Learning from static image}
 
 
+\section{Experiments}
+\subsection{Robot writing learning framework}
+
+\section{Conclusion}
 
 
 
