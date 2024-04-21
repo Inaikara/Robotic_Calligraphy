@@ -26,7 +26,7 @@ if display_mode==1
   for j=1:nbData
     stdev = sqrtm(3.0.*Sigma(:,:,j));
     X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
-    patch(X(:,1), X(:,2), lightcolor, 'lineWidth', 2, 'EdgeColor', color,'FaceAlpha',.3,'EdgeAlpha',.3);
+    patch(X(:,1), X(:,2), lightcolor, 'lineWidth', 2, 'EdgeColor', color,'FaceAlpha',.8,'EdgeAlpha',.8);
     plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
   end
 elseif display_mode==2
@@ -35,7 +35,7 @@ elseif display_mode==2
   for j=1:nbData
     stdev = sqrtm(3.0.*Sigma(:,:,j));
     X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
-    patch(X(:,1), X(:,2), lightcolor, 'LineStyle', 'none');
+    patch(X(:,1), X(:,2), lightcolor, 'LineStyle', 'none','FaceAlpha',.8,'EdgeAlpha',.8);
   end
   plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color);
 elseif display_mode==3
@@ -43,8 +43,24 @@ elseif display_mode==3
     ymax(j) = Mu(2,j) + sqrtm(3.*Sigma(1,1,j));
     ymin(j) = Mu(2,j) - sqrtm(3.*Sigma(1,1,j));
   end
-  patch([Mu(1,1:end) Mu(1,end:-1:1)], [ymax(1:end) ymin(end:-1:1)], lightcolor, 'LineStyle', 'none');
+  patch([Mu(1,1:end) Mu(1,end:-1:1)], [ymax(1:end) ymin(end:-1:1)], lightcolor, 'LineStyle', 'none','FaceAlpha',.8,'EdgeAlpha',.8);
   plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color); 
+elseif display_mode==4
+    X=[];
+    nbDrawingSeg = 51;
+    t = linspace(-pi, pi, nbDrawingSeg)';
+    for j=1:nbData
+        stdev = 3.0.*sqrtm(Sigma(:,:,j));%% 方差纠正
+        X = [X;[cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1)];
+    end
+    
+    %% 透明底
+    scatter(X(:,1), X(:,2),'filled','MarkerFaceAlpha',.1);
+
+    %% 实心底
+    % plot(X(:,1), X(:,2),'.')
+
+    plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color);
 end
 
 
