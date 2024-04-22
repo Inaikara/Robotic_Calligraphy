@@ -9,9 +9,9 @@ addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 %% 选择数据集
-n=3;% data
+n=13;% data
 type=1;% GMM/FGMM
-numComponent = 3;% num of component
+numComponent = 4;% num of component
 step=1000;
 %% 加载数据
 names = {'Angle','BendedLine','CShape','DoubleBendedLine','GShape',...
@@ -69,7 +69,7 @@ hold off
 %% 改进后
 figure
 hold on
-plotGMM(trajectory, trajthick,[0 0 .8], 2)
+plotGMM(trajectory, trajthick,[0 0 .8], 4)
 gscatter(data(:,1),data(:,2));
 hold off
 
