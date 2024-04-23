@@ -7,34 +7,14 @@ addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 
-trajectory=[];
-trajsigma=[];
-trajthick=[];
-% %% 加载FGMM数据
-% load ./Result/水FGMM.mat
-% %% 遍历每个笔画
-% for stroketype=[1,2,4,5]
-% % for stroketype=unique(componentOrder(:,1))'
-%     %% 导入笔画数据
-%     strokedata=data(data(:,4)==stroketype,[1,2,3]);
-%     strokedirect=stroke(stroke(:,4)==stroketype,[1,2,3]);
-% 
-%     %% 时间编码
-%     strokedata = GetFGMMTime(strokedata,strokedirect,C,T,Q);
-% 
-%     %% 轨迹生成
-%     [stroketrajectory,stroketrajsigma,stroketrajthick] = GetGMRTraj(strokedata(:,[1,2,4,5]),numComponent,step);
-% 
-%     %% 保存
-%     trajectory=[trajectory;stroketrajectory];
-%     trajsigma=[trajsigma;stroketrajsigma];
-%     trajthick=[trajthick;stroketrajthick];
-% end
-
 %% 加载FGMM数据
-load ./Result/水GMM.mat
+load ./Result/水FGMM.mat
+trajectoryFGMM=[];
+trajsigmaFGMM=[];
+trajthickFGMM=[];
 %% 遍历每个笔画
-for stroketype=[1,2,4,5]
+strokelist=unique(componentOrder(:,1))';
+for stroketype=strokelist
     %% 导入笔画数据
     strokedata=data(data(:,4)==stroketype,[1,2,3]);
     strokedirect=stroke(stroke(:,4)==stroketype,[1,2,3]);
@@ -46,29 +26,74 @@ for stroketype=[1,2,4,5]
     [stroketrajectory,stroketrajsigma,stroketrajthick] = GetGMRTraj(strokedata(:,[1,2,4,5]),numComponent,step);
 
     %% 保存
-    trajectory=[trajectory;stroketrajectory];
-    trajsigma=[trajsigma;stroketrajsigma];
-    trajthick=[trajthick;stroketrajthick];
+    trajectoryFGMM=[trajectoryFGMM;stroketrajectory];
+    trajsigmaFGMM=[trajsigmaFGMM;stroketrajsigma];
+    trajthickFGMM=[trajthickFGMM;stroketrajthick];
 end
+
+%% 加载GMM数据
+load ./Result/水GMM.mat
+trajectoryGMM=[];
+trajsigmaGMM=[];
+trajthickGMM=[];
+%% 遍历每个笔画
+strokelist=unique(componentOrder(:,1))';
+for stroketype=strokelist
+    %% 导入笔画数据
+    strokedata=data(data(:,4)==stroketype,[1,2,3]);
+    strokedirect=stroke(stroke(:,4)==stroketype,[1,2,3]);
+
+    %% 时间编码
+    strokedata = GetFGMMTime(strokedata,strokedirect,C,T,Q);
+
+    %% 轨迹生成
+    [stroketrajectory,stroketrajsigma,stroketrajthick] = GetGMRTraj(strokedata(:,[1,2,4,5]),numComponent,step);
+
+    %% 保存
+    trajectoryGMM=[trajectoryGMM;stroketrajectory];
+    trajsigmaGMM=[trajsigmaGMM;stroketrajsigma];
+    trajthickGMM=[trajthickGMM;stroketrajthick];
+end
+
+%% FGMM+GMM
+trajectory=[trajectoryGMM(1:2,:);trajectoryFGMM(3:8,:)];
+trajsigma=[trajsigmaGMM(1:2,:,:);trajsigmaFGMM(3:8,:,:)];
+trajthick=[trajthickGMM(1:2,:,:);trajthickFGMM(3:8,:,:)];
 
 %% 画图
-%% 改进前
+% plotstroke=1:size(trajectory,1)/2;
+plotstroke=3;
+
+% GMM+Sigma
 figure
 hold on
-for i=1:2:size(trajsigma,1)
-    plotGMM(trajectory([i,i+1],:), trajsigma([i,i+1],:,:),[0 0 .8], 2)
+for i=plotstroke
+    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajsigmaGMM([2*i-1,2*i],:,:),[0 0 .8], 2)
+    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
 end
-plot(data(:,1),data(:,2),'b.');
+% plot(data(:,1),data(:,2),'b.');
 hold off
 
-%% 改进后
+% GMM+DA
 figure
 hold on
-for i=1:2:size(trajthick,1)
-    plotGMM(trajectory([i,i+1],:), trajthick([i,i+1],:,:),[0 0 .8], 4)
+for i=plotstroke
+    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajthickGMM([2*i-1,2*i],:,:),[0 0 .8], 4)
+    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
 end
-plot(data(:,1),data(:,2),'b.');
+% plot(data(:,1),data(:,2),'b.');
 hold off
 
+% FGMM+DA
+figure
+hold on
+for i=plotstroke
+    plotGMM(trajectory([2*i-1,2*i],:), trajthick([2*i-1,2*i],:,:),[0 0 .8], 4)
+    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
+end
+% plot(data(:,1),data(:,2),'b.');
+hold off
+
+%% END
 
 
