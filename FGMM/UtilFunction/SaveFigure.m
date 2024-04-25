@@ -1,15 +1,21 @@
-function [] = SaveFigure(h,n,y)
-% h,name,y
-
-%保存到毕业论文文件夹！！
-name=strcat('D:\Windows\OneDrive - mail.scut.edu.cn\文档\Project\课程设计_毕业设计\thesis\fig\',n);
-namefig=strcat('D:\Windows\OneDrive - mail.scut.edu.cn\文档\Project\课程设计_毕业设计\thesis\fig\MatlabFig\',n);
+function [] = SaveFigure(h,n,p)% 图像，文件名, 比例
+%% 设定保存路径和文件名
+name=strcat('.\Figure\',n);
+%% 设定开启控制分辨率模式
 set(h,'PaperPositionMode','manual');
-set(h,'PaperUnits','centimeters');
-set(h,'PaperPosition',[0,0,15,y]);%恰当选择尺寸
-set(h.CurrentAxes, 'FontSize', 10.5,'LabelFontSizeMultiplier', 1,'TitleFontSizeMultiplier',1,'LineWidth',0.5)
-print(h,name,'-r1000','-dpng');%-r600可改为300dpi分辨率
-saveas(h,namefig)
+%% 设定单位
+set(h,'PaperUnits','inches');
+%% 设定图窗位置
+set(h,'PaperPosition',[0,0,7.16,7.16*p]);
+%% 设定坐标轴属性
+% set(h.CurrentAxes, 'FontSize', 10.5,'LabelFontSizeMultiplier', 1,'TitleFontSizeMultiplier',1,'LineWidth',0.5)
+axis off
+%% 保存为位图
+print(h,name,'-r600','-dpng');
+%% 保存为矢量图
+print(h,name,'-dpdf','-r0');
+%% 保存为fig格式
+% saveas(h,name)
 end
 
 

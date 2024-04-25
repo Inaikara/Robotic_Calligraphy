@@ -56,6 +56,24 @@ elseif display_mode==4
     end
     scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor',lightcolor);
     plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color);
+elseif display_mode==5
+    X=[];
+    nbDrawingSeg = 51;
+    t = linspace(-pi, pi, nbDrawingSeg)';
+    for j=1:nbData
+        stdev = sqrtm(3.0.*Sigma(:,:,j));
+        X = [X;[cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1)];
+    end
+    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor','k');
+elseif display_mode==6
+    X=[];
+    nbDrawingSeg = 51;
+    t = linspace(-pi, pi, nbDrawingSeg)';
+    for j=1:nbData
+        stdev = 3.0.*sqrtm(Sigma(:,:,j));%% 方差纠正
+        X = [X;[cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1)];
+    end
+    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor','k');
 end
 
 

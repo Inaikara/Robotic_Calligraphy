@@ -4,14 +4,15 @@ clear
 close all
 addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
 addpath(genpath('.\FGMM')); % 高斯混合模型算法库
-addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 
 %% 加载FGMM数据
 load ./Result/水FGMM.mat
+dataNew=[];
 trajectoryFGMM=[];
 trajsigmaFGMM=[];
 trajthickFGMM=[];
+
 %% 遍历每个笔画
 strokelist=unique(componentOrder(:,1))';
 for stroketype=strokelist
@@ -21,7 +22,8 @@ for stroketype=strokelist
 
     %% 时间编码
     strokedata = GetFGMMTime(strokedata,strokedirect,C,T,Q);
-
+    dataNew=[dataNew;strokedata];
+        
     %% 轨迹生成
     [stroketrajectory,stroketrajsigma,stroketrajthick] = GetGMRTraj(strokedata(:,[1,2,4,5]),numComponent,step);
 
@@ -61,39 +63,29 @@ trajsigma=[trajsigmaGMM(1:2,:,:);trajsigmaFGMM(3:8,:,:)];
 trajthick=[trajthickGMM(1:2,:,:);trajthickFGMM(3:8,:,:)];
 
 %% 画图
-% plotstroke=1:size(trajectory,1)/2;
-plotstroke=3;
-
-% GMM+Sigma
-figure
+h=figure;
 hold on
-for i=plotstroke
-    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajsigmaGMM([2*i-1,2*i],:,:),[0 0 .8], 2)
-    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
+for i=1:size(trajectory,1)/2
+    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajsigmaGMM([2*i-1,2*i],:,:),[0 0 .8], 5)
 end
-% plot(data(:,1),data(:,2),'b.');
 hold off
+SaveFigure(h,"GMM+Sigma",1)
 
-% GMM+DA
-figure
+h=figure;
 hold on
-for i=plotstroke
-    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajthickGMM([2*i-1,2*i],:,:),[0 0 .8], 4)
-    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
+for i=1:size(trajectory,1)/2
+    plotGMM(trajectoryGMM([2*i-1,2*i],:), trajthickGMM([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
-% plot(data(:,1),data(:,2),'b.');
 hold off
+SaveFigure(h,"GMM+DA",1)
 
-% FGMM+DA
-figure
+h=figure;
 hold on
-for i=plotstroke
-    plotGMM(trajectory([2*i-1,2*i],:), trajthick([2*i-1,2*i],:,:),[0 0 .8], 4)
-    plot(data(data(:,4)==strokelist(i),1),data(data(:,4)==strokelist(i),2),'b.')
+for i=1:size(trajectory,1)/2
+    plotGMM(trajectory([2*i-1,2*i],:), trajthick([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
-% plot(data(:,1),data(:,2),'b.');
 hold off
-
+SaveFigure(h,"FGMM+DA",1)
 %% END
 
 
