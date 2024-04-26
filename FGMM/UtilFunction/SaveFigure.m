@@ -1,6 +1,6 @@
 function [] = SaveFigure(h,n,p)% 图像，文件名, 比例
 %% 设定保存路径和文件名
-name=strcat('.\Figure\',n);
+name=strcat('.\Result\',n);
 %% 设定开启控制分辨率模式
 set(h,'PaperPositionMode','manual');
 %% 设定单位
@@ -13,7 +13,7 @@ axis off
 %% 保存为位图
 print(h,name,'-r600','-dpng');
 %% 保存为矢量图
-print(h,name,'-dpdf','-r0');
+% print(h,name,'-dpdf','-r0');
 %% 保存为fig格式
 % saveas(h,name)
 end

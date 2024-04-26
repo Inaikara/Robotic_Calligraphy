@@ -7,7 +7,7 @@ addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\UtilFunction'));% 工具库
 
 %% 加载FGMM数据
-load ./Result/水FGMM.mat
+load ./Result/工作区/水FGMM.mat
 dataNew=[];
 trajectoryFGMM=[];
 trajsigmaFGMM=[];
@@ -34,7 +34,7 @@ for stroketype=strokelist
 end
 
 %% 加载GMM数据
-load ./Result/水GMM.mat
+load ./Result/工作区/水GMM.mat
 trajectoryGMM=[];
 trajsigmaGMM=[];
 trajthickGMM=[];
@@ -69,7 +69,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectoryGMM([2*i-1,2*i],:), trajsigmaGMM([2*i-1,2*i],:,:),[0 0 .8], 5)
 end
 hold off
-SaveFigure(h,"GMM+Sigma",1)
+SaveFigure(h,"1",1)
 
 h=figure;
 hold on
@@ -77,7 +77,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectoryGMM([2*i-1,2*i],:), trajthickGMM([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
 hold off
-SaveFigure(h,"GMM+DA",1)
+SaveFigure(h,"2",1)
 
 h=figure;
 hold on
@@ -85,7 +85,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectory([2*i-1,2*i],:), trajthick([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
 hold off
-SaveFigure(h,"FGMM+DA",1)
+SaveFigure(h,"3",1)
 %% END
 
 
