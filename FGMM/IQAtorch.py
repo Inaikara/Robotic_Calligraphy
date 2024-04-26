@@ -1,11 +1,13 @@
 import pyiqa
 import torch, gc
+#11
 
 gc.collect()
 torch.cuda.empty_cache()
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-
+#TOPIQ(good)
+iqa_metric = pyiqa.create_metric('topiq_fr', device=device)
 
 # #AHIQ(GPU not good)
 # iqa_metric = pyiqa.create_metric('ahiq', device=device)
@@ -59,5 +61,9 @@ print(iqa_metric.lower_better)
 score_fr1 = iqa_metric('./Result/0.bmp', './Result/1.bmp')
 score_fr2 = iqa_metric('./Result/0.bmp', './Result/2.bmp')
 score_fr3 = iqa_metric('./Result/0.bmp', './Result/3.bmp')
+
+
+
+
 
 print(score_fr1,score_fr2,score_fr3)
