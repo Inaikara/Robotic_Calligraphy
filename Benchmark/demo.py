@@ -19,13 +19,9 @@ print(iqa_metric.lower_better)
 
 # example for iqa score inference
 # Tensor inputs, img_tensor_x/y: (N, 3, H, W), RGB, 0 ~ 1
-score_fr = iqa_metric(img_tensor_x, img_tensor_y)
+# score_fr = iqa_metric(img_tensor_x, img_tensor_y)
 
 # img path as inputs.
 score_fr = iqa_metric('./ResultsCalibra/dist_dir/I03.bmp', './ResultsCalibra/ref_dir/I03.bmp')
 
-# For FID metric, use directory or precomputed statistics as inputs
-# refer to clean-fid for more details: https://github.com/GaParmar/clean-fid
-fid_metric = pyiqa.create_metric('fid')
-score = fid_metric('./ResultsCalibra/dist_dir/', './ResultsCalibra/ref_dir')
-score = fid_metric('./ResultsCalibra/dist_dir/', dataset_name="FFHQ", dataset_res=1024, dataset_split="trainval70k")
+print(score_fr)
