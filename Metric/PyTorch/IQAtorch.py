@@ -6,8 +6,8 @@ gc.collect()
 torch.cuda.empty_cache()
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-#TOPIQ(good)
-iqa_metric = pyiqa.create_metric('topiq_fr', device=device)
+# #TOPIQ(good)
+# iqa_metric = pyiqa.create_metric('topiq_fr', device=device)
 
 # #AHIQ(GPU not good)
 # iqa_metric = pyiqa.create_metric('ahiq', device=device)
@@ -48,8 +48,8 @@ iqa_metric = pyiqa.create_metric('topiq_fr', device=device)
 # #NLPD(good)
 # iqa_metric = pyiqa.create_metric('nlpd', device=device)
 
-# #VSI(good)
-# iqa_metric = pyiqa.create_metric('vsi', device=device)
+#VSI(good)
+iqa_metric = pyiqa.create_metric('vsi', device=device)
 
 # #MAD(GPU not good)
 # iqa_metric = pyiqa.create_metric('mad', device=device)
@@ -59,11 +59,14 @@ print(iqa_metric.lower_better)
 
 # img path as inputs.
 score_fr1 = iqa_metric('./Result/0.bmp', './Result/1.bmp')
+torch.cuda.empty_cache()
 score_fr2 = iqa_metric('./Result/0.bmp', './Result/2.bmp')
+torch.cuda.empty_cache()
 score_fr3 = iqa_metric('./Result/0.bmp', './Result/3.bmp')
+torch.cuda.empty_cache()
+score_fr4 = iqa_metric('./Result/0.bmp', './Result/0.bmp')
 
 
 
 
-
-print(score_fr1,score_fr2,score_fr3)
+print(score_fr1,score_fr2,score_fr3,score_fr4)

@@ -11,5 +11,6 @@ output3 = np.array(Image.open("./Result/3.bmp"))
 score1 = variation_of_information(input, output1)
 score2 = variation_of_information(input, output2)
 score3 = variation_of_information(input, output3)
+score4 = variation_of_information(input, input)
 
-print(np.sum(score1),np.sum(score2),np.sum(score3))
+print(np.sum(score1),np.sum(score2),np.sum(score3),np.sum(score4))

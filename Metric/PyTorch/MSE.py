@@ -10,5 +10,6 @@ output3 = np.array(Image.open("./Result/3.bmp"))
 score1 = mean_squared_error(input, output1)
 score2 = mean_squared_error(input, output2)
 score3 = mean_squared_error(input, output3)
+score4 = mean_squared_error(input, input)
 
-print(score1,score2,score3)
+print(score1,score2,score3,score4)
