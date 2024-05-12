@@ -8,8 +8,7 @@ set(h,'PaperUnits','inches');
 %% 设定图窗位置
 set(h,'PaperPosition',[0,0,7.16,7.16*p]);
 %% 设定坐标轴属性
-% set(h.CurrentAxes, 'FontSize', 10.5,'LabelFontSizeMultiplier', 1,'TitleFontSizeMultiplier',1,'LineWidth',0.5)
-axis off
+set(h.CurrentAxes, 'FontSize', 10.5,'LabelFontSizeMultiplier', 1,'TitleFontSizeMultiplier',1,'LineWidth',0.5)
 %% 保存为位图
 print(h,name,'-r600','-dpng');
 %% 保存为矢量图
