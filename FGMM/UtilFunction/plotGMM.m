@@ -64,7 +64,7 @@ elseif display_mode==5
         stdev = sqrtm(3.0.*Sigma(:,:,j));
         X = [X;[cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1)];
     end
-    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor','k');
+    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor',color,'MarkerFaceAlpha',0.1);
 elseif display_mode==6
     X=[];
     nbDrawingSeg = 51;
@@ -73,7 +73,7 @@ elseif display_mode==6
         stdev = 3.0.*sqrtm(Sigma(:,:,j));%% 方差纠正
         X = [X;[cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1)];
     end
-    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor','k');
+    scatter(X(:,1), X(:,2),'filled','o','MarkerFaceColor',color);
 end
 
 

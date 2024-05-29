@@ -50,6 +50,20 @@ elseif display_mode==3
   end
   patch([Mu(1,1:end) Mu(1,end:-1:1)], [ymax(1:end) ymin(end:-1:1)], lightcolor, 'LineStyle', 'none');
   plot(Mu(1,:), Mu(2,:), '-', 'lineWidth', 3, 'color', color); 
+
+elseif display_mode==4
+  nbDrawingSeg = 40;
+  t = linspace(-pi, pi, nbDrawingSeg)';
+  for j=1:nbData
+    stdev = sqrtm(3.0.*Sigma(:,:,j));
+    X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
+    if abs(C(j,:))>=1e-5
+        X=BendPoint(X,C(j,:),T(j,:),Q(:,:,j));
+    end
+    patch(X(:,1), X(:,2), lightcolor, 'lineWidth', 2, 'EdgeColor', color,'FaceAlpha',.3,'EdgeAlpha',.3);
+    plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
+  end
+
 end
 
 end

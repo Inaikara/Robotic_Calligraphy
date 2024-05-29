@@ -4,7 +4,7 @@ Data=Data';% 转变为列数据
 
 % 坐标变换
 T=repmat(T,[size(Data,1),1]);
-Data = (Q*(Data-T)')';
+Data = (Q*(Data-T)')';% ?
 NewData=zeros(size(Data));
 
 a=C(1);
