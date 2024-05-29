@@ -63,14 +63,14 @@ The main contributions of this article are listed as follows. \cite{Ju2012}.
 \subsection{System Description}
 The block diagram presented in Fig. \ref{fig1} illustrates the framework of the imitation learning system for robotic handwriting tasks. The system can learn skills from static images and prior trajectories, particularly focusing on the deviation information within them, and ultimately achieving skill generalization in various environments. The entire system encompasses three aspects:
 
-\emph{1)~Image Demonstration:} The demonstration part transfers the writing skill to the robot through the character image written by a human. The proposed system enables robot learning parameters of FGMM from a static image. On the other hand, the priori information of time is attained by the priori trajectories, which explicitly show the implicit time information in the image.
+1)~Image Demonstration: The demonstration part transfers the writing skill to the robot through the character image written by a human. The proposed system enables robot learning parameters of FGMM from a static image. On the other hand, the priori information of time is attained by the priori trajectories, which explicitly show the implicit time information in the image.
 
-\emph{2)~Skill Learning:} With the parameters estimated in the previous part, we can encode the writing skill through GMR. The normal GMR method can generate the trajectory very well. However, the effect of learning the deviation among samples in the image is not that good. Therefore, we proposed a novel approach called deviation analysis to enhance the deviation learning ability of GMR. 
+2)~Skill Learning: With the parameters estimated in the previous part, we can encode the writing skill through GMR. The normal GMR method can generate the trajectory very well. However, the effect of learning the deviation among samples in the image is not that good. Therefore, we proposed a novel approach called deviation analysis to enhance the deviation learning ability of GMR. 
 
-\emph{3)~Motion Generalization:} It is common to adjust the generalization effect of writing skills in different situations, like changing the size of the written font to adapt the various types of papers in the real world. DMP is used to make the skill have great generalization performance. DMP can encode not only the trajectory but also the end-effector orientation.
+3)~Motion Generalization: It is common to adjust the generalization effect of writing skills in different situations, like changing the size of the written font to adapt the various types of papers in the real world. DMP is used to make the skill have great generalization performance. DMP can encode not only the trajectory but also the end-effector orientation.
 
 \subsection{Fuzzy Gaussian Mixture Model}
-Gaussian Mixture Models have been widely applied in various fitting scenarios. However, due to the linearity of the axes in GMM, more components are required to fit nonlinear data. Here we introduce the Fuzzy Gaussian Mixture Model. It combines the conventional GMM with Active curve axis Gaussian mixture models (AcaG) and introduces a dissimilarity function to accelerate convergence. Fig. \ref{fig2} represents the data transformation process of FGMM.
+Gaussian Mixture Models have been widely applied in various fitting scenarios. However, due to the linearity of the axes in GMM, more components are required to fit nonlinear data. Paper \cite{Ju2012} introduce a modified GMM called Fuzzy Gaussian Mixture Model (FGMM). It combines the conventional GMM with Active curve axis Gaussian mixture models (AcaG)\cite{Zhang2005} and introduces a dissimilarity function to accelerate convergence. Fig. \ref{fig2} represents the data transformation process of FGMM.
 \begin{figure}[!t]
     \centering
     \includegraphics[width=3in]{./fig/fig2.pdf}
@@ -185,7 +185,6 @@ where $X_i$ denotes samples belonging to the $i_{th}$ components, which can be c
 and $\Sigma_i$ can be estimated from:
 \begin{equation}
     L_{sn}=\frac{\sum^{J_{in}}_{j=1}p(l^i_{sj}|0,\Sigma^{old}_{si})l^i_{sj}}{\sum^{J_{in}}_{j=1}p(l^i_{sj}|0,\Sigma^{old}_{si})}~(s=1,2)
-    \label{eq3}
 \end{equation} 
 \begin{equation}
 \Sigma_{si}=\frac{\sum_{n=1}^Nw_{in}L_{sn}}{\sum_{n=1}^Nw_{in}}~(s=1,2)
@@ -243,7 +242,7 @@ where
     \label{eq2}
 \end{equation}
 
-In the previous part, the GMM is replaced with FGMM, which has better non-linear fitting capability. The regression function should be redesigned. Paper\cite{Ju2012} proposes a new regression algorithm for FGMM. Notice that Eq.\ref{eq2} is a linear function, it defines the location of GMM's principal axis. For the FGMM, the corresponding axis can be obtained from the PCA inverse transformation:
+In the previous part, the GMM is replaced with FGMM, which has better non-linear fitting capability. The regression function should be redesigned. Paper\cite{Yang2019c} proposes a new regression algorithm for FGMM. Notice that Eq.\ref{eq2} is a linear function, it defines the location of GMM's principal axis. For the FGMM, the corresponding axis can be obtained from the PCA inverse transformation:
 \begin{equation}
     A_i'=Q_i^{\bf{T}}A_i+T_i
 \end{equation}
@@ -254,7 +253,7 @@ where $A_i$ and $A_i'$ denote the original axis and transformed axis. The regres
 where the FGMM component should replace each Gaussian component in $w_i'$, the movement trajectory planning by GMR is presented in Fig.\ref{fig4}. Compared with Fig.\ref{fig3}, it can be seen that the trajectory highly overlaps with the principal axis.
 
 \subsection{Deviation Analysis}
-In some scenarios, such as transferring writing skills to robots, they need to learn not only the trajectory information of sample points but also the deviation between them. The pink area shown in Fig.\ref{fig4} denotes the covariance of trajectory generated by GMR. The fitting effect is not ideal. A new method based on FGMM is proposed. Analyse the deviation of samples to generate a variance sequence for a better fitting effect.
+In some scenarios, such as transferring writing skills to robots, they need to learn not only the trajectory information of sample points but also the deviation among them. The pink area shown in Fig.\ref{fig4} denotes the covariance of trajectory generated by GMR. The fitting effect is not ideal. A new method based on FGMM is proposed. Analyse the deviation of samples to generate a variance sequence for a better fitting effect.
 
 In addition to generating a trajectory from time input, GMR can also generate a corresponding covariance sequence $\{\Sigma_1,\hdots,\Sigma_t\}$. It denotes the covariance among samples in time $t$. The covariance matrix implicitly contains the posture and deviation of the trajectory. They can be obtained by eigenvalue decomposition:
 \begin{equation}
@@ -275,7 +274,7 @@ the new covariance sequence is:
 \end{equation}
 
 \subsection{Dynamic Movement Primitive}
-The DMP is a LfD model based on dynamic systems. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
+The DMP is a LfD model based on dynamic systems\cite{Ijspeert2013}. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
 \begin{equation}
     \ddot y = \alpha(\beta(g-y)-\dot y) + f
     \label{eq4}
@@ -300,14 +299,16 @@ where, $\Psi(t)$ is a Radial Basis Function (RBF), expressed as:
 \begin{equation}
     \Psi_i(x)= \exp \left(-\frac{\left(x-\mu_i \right)^{2}}{2 \sigma_i^{2}}\right)
 \end{equation}
-where $N$ represents the number of RBF, $\mu_i$ represents the position of the $i^{th}$ basis function, and $\sigma_i$ represents the width of the $i^{th}$ basis function. $\omega_i$ represents the weight of the $i^{th}$ radial basis function, which needs to be obtained by learning from the demonstration trajectory. Given a demonstration trajectory $y_{dms}$, the expression for $f$ can be derived from Eq.\ref{eq4}:
+where $N$ represents the number of RBF, $\mu_i$ represents the position of the $i^{th}$ basis function, and $\sigma_i$ represents the width of the $i^{th}$ basis function. $\omega_i$ represents the weight of the $i^{th}$ radial basis function, which needs to be obtained by learning from the demonstration trajectory. Given a demonstration trajectory $y_{dms}$, the expression for $f_{dms}$ can be derived from Eq.\ref{eq4}:
 \begin{equation}
     f_{dms} = \tau^2 \ddot y_{dms} - \alpha(\beta (g-y_{dms})-\tau \dot y_{dms})
     \label{eq6}
 \end{equation}
-where the Locally Weighted Regression (LWR) is used to make $f$ fit the $f_{dms}$.
+where Locally Weighted Regression (LWR) is used to determining the weight parameter $w_{i}$, which can control the $f(x)$ to fit $f_{dms}$.
 
 \section{Experiments}
+\subsection{Simulation}
+In this part, The proposed method is verified through simulation. A Chinese calligraphy image is used as the demonstration image, denoted in Fig.\ref{fig1}. Paper \cite{Li2022} propose an observation based method which can extract strokes from the Chinese character image. The result is represented in Fig.\ref{fig1}. It divides Chinese characters into several strokes and indicates their writing direction. Then 
 
 
 \section{Conclusion}

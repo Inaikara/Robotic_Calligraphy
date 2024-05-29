@@ -25,4 +25,24 @@
 Z.~Ju and H.~Liu, ``Fuzzy gaussian mixture models,'' \emph{Pattern
   Recognition}, vol.~45, no.~3, pp. 1146--1158, 2012.
 
+\bibitem{Zhang2005}
+B.~Zhang, C.~Zhang, and X.~Yi, ``Active curve axis gaussian mixture models,''
+  \emph{Pattern Recognition}, vol.~38, no.~12, pp. 2351--2362, 2005.
+
+\bibitem{Yang2019c}
+C.~Yang, C.~Chen, N.~Wang, Z.~Ju, J.~Fu, and M.~Wang, ``Biologically inspired
+  motion modeling and neural control for robot learning from demonstrations,''
+  \emph{IEEE Transactions on Cognitive and Developmental Systems}, vol.~11,
+  no.~2, pp. 281--291, 2019.
+
+\bibitem{Ijspeert2013}
+A.~J. Ijspeert, J.~Nakanishi, H.~Hoffmann, P.~Pastor, and S.~Schaal,
+  ``Dynamical movement primitives: Learning attractor models for motor
+  behaviors,'' \emph{Neural Computation}, vol.~25, no.~2, pp. 328--373, 2013.
+
+\bibitem{Li2022}
+X.~Li, W.~Si, and C.~Yang, ``An observation based method for human robot
+  writing skill transfer,'' in \emph{2022 IEEE 17th International Conference on
+  Control \& Automation (ICCA)}, 2022, pp. 412--417.
+
 \end{thebibliography}

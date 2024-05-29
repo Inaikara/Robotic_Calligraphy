@@ -69,7 +69,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectoryGMM([2*i-1,2*i],:), trajsigmaGMM([2*i-1,2*i],:,:),[0 0 .8], 5)
 end
 hold off
-SaveFigure(h,"1",1)
+% SaveFigure(h,"1",1)
 
 h=figure;
 hold on
@@ -77,7 +77,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectoryGMM([2*i-1,2*i],:), trajthickGMM([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
 hold off
-SaveFigure(h,"2",1)
+% SaveFigure(h,"2",1)
 
 h=figure;
 hold on
@@ -85,7 +85,7 @@ for i=1:size(trajectory,1)/2
     plotGMM(trajectory([2*i-1,2*i],:), trajthick([2*i-1,2*i],:,:),[0 0 .8], 6)
 end
 hold off
-SaveFigure(h,"3",1)
+% SaveFigure(h,"3",1)
 %% END
 
 
