@@ -10,6 +10,8 @@
 \usepackage{verbatim}
 \usepackage{graphicx}
 \usepackage{cite}
+\usepackage{booktabs}
+\usepackage{tabularx}
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 % updated with editorial comments 8/9/2021
 
@@ -51,7 +53,6 @@ The main contributions of this article are listed as follows. \cite{Ju2012}.
 2) We present a new LfD method which can demonstrate by a single static image, each sample point on the image is encoded by a prior trajectory and FGMM. The skills are then learnt through the proposed methods.
 
 3) We give a method for generating a priori trajectories of Chinese characters and design a robot learning framework for learning to write. Experiments were carried out on the LASA dataset and Chinese character images to verify the effectiveness of the method.
-
 \begin{figure*}[!t]
     \centering
     \includegraphics[width=6in]{./fig/fig1.pdf}
@@ -219,7 +220,6 @@ if there are multiple components, repeat this process until the end. The time se
     \label{fig4}
 \end{figure}
 
-\subsection{Gaussian Mixture Regression}
 After time encoding, the time-driven method can be used for motion planning in writing tasks. Gaussian Mixture Regression (GMR) is a statistical learning technique that combines the GMM with linear regression. GMR is used to address nonlinear regression problems by capturing the intrinsic structure of the data through a Gaussian mixture model, which is then used to perform regression analysis. GMR allows us to specify one dimension of the GMM as input, with the remaining dimensions as output. Here, the time sequence $t$ obtained before is used as the input, and the position $X=\{x_1,\hdots,x_n\}$ as the output to plan the writing trajectory. The regression function can be considered as obtaining the expectation of an event for the output $X$ conditional on the input $t$:
 \begin{equation}
     \mathcal{F} _{gmr}(t)=E(X|t)
@@ -316,14 +316,60 @@ In this part, The proposed method is verified through simulation. A Chinese call
     \label{fig5}
 \end{figure*}
 
-For each stroke, the sample points are time-encoded based on the known writing direction and component order. The new GMR method and DA is used to learn the writing trajectory and deviation degree of the character. In the simulation part we need to simulate the effect of robot writing on the computer. Three different methods will be compared, the GMM without DA, the GMM with DA and the FGMM with DA. To maintain the accuracy of the comparison, the writing tasks are simulated based on a unified model. Assume the trajectory 
-
+The sample points are time-encoded for each stroke based on the known writing direction and component order. The new GMR method and DA is used to learn the character's writing trajectory and deviation degree. In the simulation part we need to simulate the effect of robot writing on the computer. The following three methods will be compared to the effect of writing tasks: the GMM without DA, the GMM with DA and the FGMM with DA. To maintain the accuracy of the comparison, the writing tasks are simulated based on a unified method. Assume the discrete trajectory is $\{(x_1,y_1),\hdots,(x_N,y_N)\}$, and the covariance matrix sequence is $\{\Sigma_1,\hdots,\Sigma_N\}$. At time t, the writing trajectory is defined as:
+\begin{equation}
+    o_t =[cos(p),sin(p)]\sqrt{3\Sigma_t}+[x_t,y_t]~~(-\pi<p<\pi)
+\end{equation}
+where the area represented by $o_t$ indicates the writing trace at time t. The writing simulation results for the three methods are denoted in Fig.\ref{fig6}. 
 \begin{figure}[!t]
     \centering
     \includegraphics[width=3in]{./fig/fig6.pdf}
-    \caption{The result of stroke extraction.}
+    \caption{The writing simulation of Chinese character "water".}
     \label{fig6}
 \end{figure}
+
+To compare the fitting effect of the simulation results with the demonstration image, we introduce 10 commonly used Image Quality Assessment (IQA) methods as evaluation metrics, denoted in Table.\ref{tab1}. They are all Full Reference (FR) methods, which can evaluate the differences between the simulation results and the demonstration image. The evaluation results are presented in Table.\ref{tab2}. The DA improve the fitting effect of Chinese character a lot. The improvements in FGMM further enhance the fitting effect.  
+\begin{table}[!t]
+\centering  
+\caption{IQA METRICS AND MEANINGS}
+\label{tab1}
+\begin{tabularx}{3in}{lX}
+\toprule
+Metric & Description\\
+\midrule
+PSNR & Peak signal-to-noise ratio. A higher score indicates a higher similarity.\\
+FSIM & Feature Similarity Index. A higher score indicates a higher similarity.\\
+SSIM & Structural Similarity Index. A higher score indicates a higher similarity.\\
+VSI & Visual Saliency-based Index. A higher score indicates a higher similarity.\\
+VIF & Visual Information Fidelity. A higher score indicates a higher similarity.\\ 
+IFC & Image Fidelity Criterion. A higher score indicates a higher similarity.\\
+DISTS & Differential Stimulation Similarity. A lower score indicates a higher similarity.\\
+MSE & Mean Square Error. A lower score indicates a higher similarity.\\
+VOI & Variation of Information. A lower score indicates a higher similarity.\\
+LPIPS & Learned Perceptual Image Patch Similarity. A lower score indicates a higher similarity.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table*}[!t]
+\centering  
+\caption{IQA METRICS AND MEANINGS}
+\label{tab2}
+\begin{tabular}{ccccccccccc}
+\toprule
+Model & PSNR$\uparrow$ & FSIM$\uparrow$ & SSIM$\uparrow$ & VSI$\uparrow$ & VIF$\uparrow$ & IFC$\uparrow$ & DISTS$\downarrow$ & MSE$\downarrow$ & VOI$\downarrow$ & LPIPS$\downarrow$\\
+\midrule
+GMM & 10.7447 & 0.7896 & 0.7867 & 0.7665 & 0.0203 & 0.0452 & 0.3535 & 5477.8718 & 2.9374 & 0.3354 \\
+GMM+DA & 11.5709 & 0.7901 & 0.7928 & 0.8018 & 0.0225 & 0.0493 & 0.3522 & 4528.9159 & 2.8622 & 0.3058 \\
+\textbf{FGMM+DA} & \textbf{12.1143} & \textbf{0.7990} & \textbf{0.8019} & \textbf{0.8126} & \textbf{0.0236} & \textbf{0.0514} & \textbf{0.3463} & \textbf{3996.2290} & \textbf{2.8019} & \textbf{0.2951} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{DMP Generalization}
+
+
+\subsection{Real-World Experiment}
 
 \section{Conclusion}
 \bibliographystyle{IEEEtran}

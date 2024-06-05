@@ -1,0 +1,12 @@
+clc
+clear
+close all
+%% 加载DMP数据
+load DMPResult.mat
+x1=track(1,:);
+x2=track(4,:);
+x3=track(7,:);
+y1=track(2,:);
+y2=track(1,:);
+y3=track(1,:);
+

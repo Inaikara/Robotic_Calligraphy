@@ -44,11 +44,11 @@ def DmpCalculate(data, ratio=[1.0, 1.0], thickness=1.0):
 
 if __name__ == "__main__":
     # import data
-    data = "./output.mat"
+    data = "./水FGMM.mat"
 
     # calculate
     track, numStroke, numStep = DmpCalculate(data, [1, 1], 0.5)
-
+    scio.savemat('DMPResult.mat', {'track':track})
     data = scio.loadmat(data)
     trajectory = data["trajectory"]  # location info
 
