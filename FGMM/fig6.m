@@ -1,122 +1,61 @@
-%% START
 clc
 clear
 close all
-addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
-addpath(genpath('.\FGMM')); % 高斯混合模型算法库
-addpath(genpath('.\UtilFunction'));% 工具库
+%% 加载DMP数据
+load ./Data/DMPResult.mat
+load ./Data/Result.mat
+load ./Data/水dataNew.mat
+load ./Data/水FGMM.mat
+%% color
+t=1:1000;
+red=[1,0.39,0.38];
+yellow=[1,0.65,0.0];
+magneta=[0.74,0.31,0.56];
+purple=[0.35,0.31,0.55];
+dark=[0,0.25,0.36];
+%% 变量
+tmp=[1,473;474,1127;1128,1554;1555,1841];
+figname=["fig6a.pdf","fig6b.pdf","fig6c.pdf","fig6d.pdf"];
 
-%% 加载FGMM数据
-fgmmstroke=[2,5,7,6,3];
-gmmstroke=[3,7,2,8,4];
-load ./Result/工作区/水FGMM.mat
-Mu=charGMM.mu';
-Sigma=charGMM.Sigma;
-load('./Result/工作区/水GMM.mat','charGMM');
-Mu(:,fgmmstroke)=charGMM.mu(gmmstroke,:)';
-Sigma(:,:,fgmmstroke)=charGMM.Sigma(:,:,gmmstroke);
-nbData=size(Mu,2);
-nbDrawingSeg = 50;
-t = linspace(-pi, pi, nbDrawingSeg)';
+for i=1:4
+x1=track(3*i-2,:);
+dx1=dmptrack(3*i-2,:);
+y1=track(3*i-2+1,:);
+dy1=dmptrack(3*i-2+1,:);
 
-%% 画图6b
-p1=figure;
+%% 画图
+figure
+fig=tiledlayout(2,1);
+fig.TileSpacing = 'compact';
+fig.Padding = 'compact';
+
+nexttile
 hold on
-color=[1,0.65,0;1,0.39,0.38;0,0,0;0.74,0.31,0.56;0,0.25,0.36];
-for i=[1,2,4,5]
-    plot(data(data(:,4)==i,1),data(data(:,4)==i,2),'.','Color',color(i,:))
-    % plot(stroke(stroke(:,4)==i,1),stroke(stroke(:,4)==i,2),'.','MarkerSize',20,'Color',color(i,:))
-end
-% color=[1,0.65,0;1,0.39,0.38;0.74,0.31,0.56;0,0.25,0.36];
-for j=1:nbData
-    idx=componentOrder(:,2)==j;
-    idx=componentOrder(idx,1);
-    stdev = sqrtm(3.0.*Sigma(:,:,j));
-    X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
-    if abs(C(j,:))>=1e-5
-        X=BendPoint(X,C(j,:),T(j,:),Q(:,:,j));
-    end
-    patch(X(:,1), X(:,2), color(idx,:), 'lineWidth', 2, 'EdgeColor', color(idx,:),'FaceAlpha',.8,'EdgeAlpha',.8);
-    % plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
-end
-axis equal
-axis off
+dt=1000*dataNew(tmp(i,1):tmp(i,2),4)/max(dataNew(tmp(i,1):tmp(i,2),4));
+% dem=plot(dt,dataNew(tmp(i,1):tmp(i,2),1)-50.9643,'Color',[red,0.3]);
+% dem=scatter(dt,dataNew(tmp(i,1):tmp(i,2),1)-50.9643,'filled','CData',red,'SizeData',10,'MarkerFaceAlpha',0.3);
+rep1=plot(t,x1,'-','Color',red,'LineWidth',2);
+rep5=plot(t,dx1,'-','Color',magneta,'LineWidth',2);
+ylabel("X-axis")
+xticklabels='None';
+xtick='None';
 hold off
-exportgraphics(p1,'fig6c.png','Resolution',600)
 
-%% 画图6a
-p1=figure;
+nexttile
 hold on
-color=[1,0.65,0;1,0.39,0.38;0,0,0;0.74,0.31,0.56;0,0.25,0.36];
-for i=[1,2,4,5]
-    plot(data(data(:,4)==i,1),data(data(:,4)==i,2),'.','Color',color(i,:))
-    plot(stroke(stroke(:,4)==i,1),stroke(stroke(:,4)==i,2),'.','MarkerSize',20,'Color',color(i,:))
-end
-axis equal
-axis off
+% plot(dt,dataNew(tmp(i,1):tmp(i,2),2)-53.0916,'Color',[red,0.3]);
+% scatter(dt,dataNew(tmp(i,1):tmp(i,2),2)-53.0916,'filled','CData',red,'SizeData',10,'MarkerFaceAlpha',0.3);
+plot(t,y1,'-','Color',red,'LineWidth',2)
+plot(t,dy1,'-','Color',magneta,'LineWidth',2)
+xlabel("Time (step)")
+ylabel("Y-axis")
 hold off
-exportgraphics(p1,'fig6a.png','Resolution',600)
 
-%% 画图6c
-load('./Result/工作区/水GMM.mat');
-Mu=charGMM.mu';
-Sigma=charGMM.Sigma;
-nbData=size(Mu,2);
-nbDrawingSeg = 50;
-t = linspace(-pi, pi, nbDrawingSeg)';
-p1=figure;
-hold on
-color=[1,0.65,0;1,0.39,0.38;0,0,0;0.74,0.31,0.56;0,0.25,0.36];
-for i=[1,2,4,5]
-    plot(data(data(:,4)==i,1),data(data(:,4)==i,2),'.','Color',color(i,:))
-    % plot(stroke(stroke(:,4)==i,1),stroke(stroke(:,4)==i,2),'.','MarkerSize',20,'Color',color(i,:))
+set(gcf,'unit','normalized','position',[0.1,0.1,0.4,0.3]);%figture位置，最下角，宽高
+% set (gca,'position',[0.1,0.1,0.8,0.8] );%axis位置，最下角，宽高
+legend([rep1,rep5],{'Reproduction (Original Size)','Reproduction (Half Size)'},Location="northwest")
+exportgraphics(fig,figname(i),'ContentType','vector')
 end
-% color=[1,0.65,0;1,0.39,0.38;0.74,0.31,0.56;0,0.25,0.36];
-for j=1:nbData
-    idx=componentOrder(:,2)==j;
-    idx=componentOrder(idx,1);
-    stdev = sqrtm(3.0.*Sigma(:,:,j));
-    X = [cos(t) sin(t)] * real(stdev) + repmat(Mu(:,j)',nbDrawingSeg,1);
-    if abs(C(j,:))>=1e-5
-        X=BendPoint(X,C(j,:),T(j,:),Q(:,:,j));
-    end
-    patch(X(:,1), X(:,2), color(idx,:), 'lineWidth', 2, 'EdgeColor', color(idx,:),'FaceAlpha',.8,'EdgeAlpha',.8);
-    % plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'color', color);
-end
-axis equal
-axis off
-hold off
-exportgraphics(p1,'fig6b.png','Resolution',600)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 

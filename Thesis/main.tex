@@ -74,7 +74,19 @@ The block diagram presented in Fig. \ref{fig1} illustrates the framework of the 
 Gaussian Mixture Models have been widely applied in various fitting scenarios. However, due to the linearity of the axes in GMM, more components are required to fit nonlinear data. Paper \cite{Ju2012} introduce a modified GMM called Fuzzy Gaussian Mixture Model (FGMM). It combines the conventional GMM with Active curve axis Gaussian mixture models (AcaG)\cite{Zhang2005} and introduces a dissimilarity function to accelerate convergence. Fig. \ref{fig2} represents the data transformation process of FGMM.
 \begin{figure}[!t]
     \centering
-    \includegraphics[width=3in]{./fig/fig2.pdf}
+    \subfloat[]{
+    \includegraphics[width=1.5in]{./fig/fig2-a.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig2-b.pdf}
+    }
+    \quad
+    \subfloat[]{
+    \includegraphics[width=1.5in]{./fig/fig2-c.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig2-d.pdf}
+    }
     \caption{The data transformation process of FGMM.}
     \label{fig2}
 \end{figure}
@@ -274,7 +286,7 @@ the new covariance sequence is:
 \end{equation}
 
 \subsection{Dynamic Movement Primitive}
-The DMP is a LfD model based on dynamic systems\cite{Ijspeert2013}. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
+To enable the proposed method to adapt to writing tasks in different environments, the DMP is combined into the designed skill learning framework. The DMP is a LfD model based on dynamic systems\cite{Ijspeert2013}. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
 \begin{equation}
     \ddot y = \alpha(\beta(g-y)-\dot y) + f
     \label{eq4}
@@ -311,8 +323,26 @@ where Locally Weighted Regression (LWR) is used to determining the weight parame
 In this part, The proposed method is verified through simulation. A Chinese calligraphy image is used as the demonstration image, denoted in Fig.\ref{fig5}. Paper \cite{Li2022} propose an observation based algorithm which can extract strokes from the Chinese character image. As shown in Fig.\ref{fig5}(a), the Chinese character is divided into four strokes. Each stroke contains temporal information, which can be used to indicate the writing direction and the order of seven components, as Fig.\ref{fig5}(b) and (c) denotes. Fig.\ref{fig5}(b) and (c) also show the result of fitting the Chinese character image by conventional GMM and FGMM, respectively. The conventional GMM need to use 8 components to fit the character well. In contrast, the FGMM only requires 7 components.
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=6in]{./fig/fig5.pdf}
-    \caption{The result of stroke extraction.}
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-a.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-b.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-c.pdf}
+    }
+    \quad
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-d.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-e.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=2in]{./fig/fig5-f.pdf}
+    }
+    \caption{The writing simulation of Chinese character "water".}
     \label{fig5}
 \end{figure*}
 
@@ -320,13 +350,7 @@ The sample points are time-encoded for each stroke based on the known writing di
 \begin{equation}
     o_t =[cos(p),sin(p)]\sqrt{3\Sigma_t}+[x_t,y_t]~~(-\pi<p<\pi)
 \end{equation}
-where the area represented by $o_t$ indicates the writing trace at time t. The writing simulation results for the three methods are denoted in Fig.\ref{fig6}. 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=3in]{./fig/fig6.pdf}
-    \caption{The writing simulation of Chinese character "water".}
-    \label{fig6}
-\end{figure}
+where the area represented by $o_t$ indicates the writing trace at time t. The writing simulation results for the three methods are denoted in Fig.\ref{fig5}. 
 
 To compare the fitting effect of the simulation results with the demonstration image, we introduce 10 commonly used Image Quality Assessment (IQA) methods as evaluation metrics, denoted in Table.\ref{tab1}. They are all Full Reference (FR) methods, which can evaluate the differences between the simulation results and the demonstration image. The evaluation results are presented in Table.\ref{tab2}. The DA improve the fitting effect of Chinese character a lot. The improvements in FGMM further enhance the fitting effect.  
 \begin{table}[!t]
@@ -351,23 +375,73 @@ LPIPS & Learned Perceptual Image Patch Similarity. A lower score indicates a hig
 \end{tabularx}
 \end{table}
 
-\begin{table*}[!t]
-\centering  
-\caption{IQA METRICS AND MEANINGS}
-\label{tab2}
-\begin{tabular}{ccccccccccc}
-\toprule
-Model & PSNR$\uparrow$ & FSIM$\uparrow$ & SSIM$\uparrow$ & VSI$\uparrow$ & VIF$\uparrow$ & IFC$\uparrow$ & DISTS$\downarrow$ & MSE$\downarrow$ & VOI$\downarrow$ & LPIPS$\downarrow$\\
-\midrule
-GMM & 10.7447 & 0.7896 & 0.7867 & 0.7665 & 0.0203 & 0.0452 & 0.3535 & 5477.8718 & 2.9374 & 0.3354 \\
-GMM+DA & 11.5709 & 0.7901 & 0.7928 & 0.8018 & 0.0225 & 0.0493 & 0.3522 & 4528.9159 & 2.8622 & 0.3058 \\
-\textbf{FGMM+DA} & \textbf{12.1143} & \textbf{0.7990} & \textbf{0.8019} & \textbf{0.8126} & \textbf{0.0236} & \textbf{0.0514} & \textbf{0.3463} & \textbf{3996.2290} & \textbf{2.8019} & \textbf{0.2951} \\
-\bottomrule
-\end{tabular}
-\end{table*}
+% \begin{table*}[!t]
+% \centering  
+% \caption{IQA METRICS AND MEANINGS}
+% \label{tab2}
+% \begin{tabular}{ccccccccccc}
+% \toprule
+% Model & PSNR$\uparrow$ & FSIM$\uparrow$ & SSIM$\uparrow$ & VSI$\uparrow$ & VIF$\uparrow$ & IFC$\uparrow$ & DISTS$\downarrow$ & MSE$\downarrow$ & VOI$\downarrow$ & LPIPS$\downarrow$\\
+% \midrule
+% GMM & 10.7447 & 0.7896 & 0.7867 & 0.7665 & 0.0203 & 0.0452 & 0.3535 & 5477.8718 & 2.9374 & 0.3354 \\
+% GMM+DA & 11.5709 & 0.7901 & 0.7928 & 0.8018 & 0.0225 & 0.0493 & 0.3522 & 4528.9159 & 2.8622 & 0.3058 \\
+% \textbf{FGMM+DA} & \textbf{12.1143} & \textbf{0.7990} & \textbf{0.8019} & \textbf{0.8126} & \textbf{0.0236} & \textbf{0.0514} & \textbf{0.3463} & \textbf{3996.2290} & \textbf{2.8019} & \textbf{0.2951} \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
 
-\subsection{DMP Generalization}
+\begin{table}[!t]
+    \centering  
+    \caption{THE IQA RESULT OF THE SIMULATION}
+    \label{tab2}
+    \begin{tabular}{cccc}
+    \toprule
+    Metric & GMM & GMM+DA & \textbf{FGMM+DA} \\
+    \midrule
+    PSNR$\uparrow$ & 10.7447 & 11.5709 & \textbf{12.1143} \\
+    FSIM$\uparrow$ & 0.7896 & 0.7901 & \textbf{0.7990} \\
+    SSIM$\uparrow$ & 0.7867 & 0.7928 & \textbf{0.8019} \\
+    VSI$\uparrow$ & 0.7665 & 0.8018 & \textbf{0.8126} \\
+    VIF$\uparrow$ & 0.0203 & 0.0225 & \textbf{0.0236} \\
+    IFC$\uparrow$ & 0.0452 & 0.0493 & \textbf{0.0514} \\
+    VOI$\downarrow$ & 2.9374 & 2.8622 & \textbf{2.8019} \\
+    MSE$\downarrow$ & 5477.8718 & 4528.9159 & \textbf{3996.2290} \\
+    DISTS$\downarrow$ & 0.3535 & 0.3522 & \textbf{0.3463} \\
+    LPIPS$\downarrow$ & 0.3354 & 0.3058 & \textbf{0.2951} \\
+    \bottomrule
+    \end{tabular}
+\end{table}
 
+\subsection{Generalization Verification}
+In this part we will verify the generalization performance of the method. In the real world, the writing skills should be able to reproduce correspondingly in a variety of scenarios, like writing in different sizes of paper. Here the same Chinese character is used as an example to verify the performance of the writing skills reproduction.
+
+Assuming the paper size for reproducing the writing skills is half the size of the demonstration image, the starting and ending points of the Chinese character strokes need to be re-determined. Here, the one-point perspective is used to determine the new starting and ending points. Then the proposed framework can reproduce the writing skills to fit this new scenario. Fig.\ref{fig6} denotes the demonstrative samples after time encoding and the reproduction of writing skills in $X$ and $Y$ dimension. The reproduction trajectories and their starting and ending points are represented in Fig.\ref{fig7}.
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig6a.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig6b.pdf}
+    }
+    \quad
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig6c.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig6d.pdf}
+    }
+    \caption{The reproduction of writing skill for each stroke.}
+    \label{fig6}
+\end{figure*}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=3in]{./fig/fig7.pdf}
+    \caption{The new starting and ending points for each stroke determined by one-point perspective. And the reproduction of writing skill for the whole Chinese character.}
+    \label{fig7}
+\end{figure}
 
 \subsection{Real-World Experiment}
 

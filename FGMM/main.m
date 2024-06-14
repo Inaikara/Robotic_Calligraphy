@@ -3,13 +3,13 @@ clc
 clear
 close all
 addpath(genpath('.\FindCurve')); % 硬笔笔画算法库
-addpath(genpath('.\GMM')); % 高斯混合模型算法库
+addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\PlotFunction')); % 绘图库
 addpath(genpath('.\UtilFunction'));% 工具库
 %% 参数设定
 step=1000;
 numComponent = 8;
-img = rgb2gray(imread('./Result/下0.jpg'));
+img = rgb2gray(imread('./Result/原图.jpg'));
 
 %% 图像预处理
 [img,data] = ImgProcess(img);
@@ -39,7 +39,7 @@ trajectory = GetTrajectory(data,componentOrder,step);
 % HardStrokePlot(charGMM,stroke)
 % 
 % 软笔笔画
-SoftStrokePlot(charGMM,data)
+% SoftStrokePlot(charGMM,data)
 
 %% 数据处理
 [trajectory,data] = TrajectoryProcess(trajectory,data);

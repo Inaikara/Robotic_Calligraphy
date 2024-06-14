@@ -47,8 +47,8 @@ if __name__ == "__main__":
     data = "./水FGMM.mat"
 
     # calculate
-    track, numStroke, numStep = DmpCalculate(data, [1, 1], 0.5)
-    scio.savemat('DMPResult.mat', {'track':track})
+    track, numStroke, numStep = DmpCalculate(data, [2, 2], 0.5)
+    scio.savemat('Result.mat', {'track':track})
     data = scio.loadmat(data)
     trajectory = data["trajectory"]  # location info
 

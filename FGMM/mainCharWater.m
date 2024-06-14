@@ -7,7 +7,7 @@ addpath(genpath('.\FGMM')); % 高斯混合模型算法库
 addpath(genpath('.\UtilFunction'));% 工具库
 
 %% 加载FGMM数据
-load ./Result/工作区/水FGMM.mat
+load ./Data/水FGMM.mat
 dataNew=[];
 trajectoryFGMM=[];
 trajsigmaFGMM=[];
