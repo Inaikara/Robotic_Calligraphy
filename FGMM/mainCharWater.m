@@ -62,6 +62,8 @@ trajectory=[trajectoryGMM(1:2,:);trajectoryFGMM(3:8,:)];
 trajsigma=[trajsigmaGMM(1:2,:,:);trajsigmaFGMM(3:8,:,:)];
 trajthick=[trajthickGMM(1:2,:,:);trajthickFGMM(3:8,:,:)];
 
+%%
+
 %% 画图
 h=figure;
 hold on

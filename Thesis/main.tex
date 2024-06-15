@@ -18,7 +18,7 @@
 \begin{document}
 \title{Title}
 \author{Wenjin Xu, Chenguang Yang~\IEEEmembership{Fellow,~IEEE,}
-    \thanks{This paper was produced by the IEEE Publication Technology Group. They are in Piscataway, NJ.}
+    \thanks{}
     \thanks{Manuscript received April 19, 2021; revised August 16, 2021.}}
 
 % The paper headers
@@ -31,22 +31,21 @@
 
 \maketitle
 \begin{abstract}
-    In our daily life, human can accomplish complex tasks with great ease by inspiring and generalizing a set of fundamental skills from the past. Notably, it would be outstanding for the robotic control systems to benefit from such brilliant learning capability. In the last decades, many researchers have paid their massive efforts to investigate the robotic motor control learning problems to provide reasonable decision-making and advanced control methods, such as sliding mode control, adaptive NN control and robust control, etc. In general, it is well known that the robot dynamic is hard to be modeled appropriately with the increasing complexity of manipulator's structure. Due to the excellent approximation capability of NN and fuzzy system, they have been extensively utilized for adaptive control systems to estimate the unknown dynamic of robot at any specific accuracy. Particularly, a notable method which incorporates the fuzzy logic to adaptive NN control has been widely adopted to address the problems of lacking automatic learning capabilities in fuzzy system. By considering the uniform boundedness and state constraints, He~\textit{et al.} proposed an adaptive fuzzy neural network (FNN) control to address the interaction problem of robot. In, a developed FNN control structure is employed to approximate the uncertain dynamic model of a dual-arm robot. Despite much progress achieved in model approximation, several other methodologies have been proposed to ensure the control performance, such as input saturation which can tackle the control problem related to input constraint, finite-time
-    convergence control.
+    
 \end{abstract}
 
 \begin{IEEEkeywords}
-    robotic
+
 \end{IEEEkeywords}
 
 \section{Introduction}
-\IEEEPARstart{D}{uring} the past few years, increasing robotic manipulator techniques have been employed into industrial applications and our daily life. One of the most difficult problems in robotic research is how to achieve the human-like working manner in its workspace, such as distinctive capability of skills learning and friendly desirable interaction control. Such abilities are of great importance to enable robots to respond more intelligently and be able to fulfil more complex, dexterous and versatile tasks in various fields such as industrial applications and service areas.
+\IEEEPARstart{T}{oday}, we find ourselves in an era where technology is rapidly evolving and undergoing swift generational changes. New technologies, represented by robotics, are continuously transforming people's lives. In the past, robots were limited to performing simple and repetitive tasks within the confines of factories. However, with the evolution of human-robot skill transfer technologies, they can increasingly address more sophisticated tasks. Robots are capable of fulfilling production tasks on streamlines and increasingly serving humanity in everyday life, such as the robotic writing task.
 
-Nevertheless, a key problem in the aforementioned control schemes which is tough to address is that the neural nodes for NN or the logic rules for fuzzy system are specified beforehand in terms of the expert experiences. Once the desired motion trajectory or working environment is changed, the original controller, unsurprisingly, may result in poor control tracking performance even irreversible consequence. In such case, the FNN controller, which is lack of generation ability from neural biological attribute point of view, needs to be redesigned to deal with the new tasks. Recently, a novel framework named broad learning system, which is developed from random vector functional-link neural networks (RVFLNN), has been proposed and extensively utilized for pattern recognition and classification. By taking the advantages of RVFLNN, BLS can offer acceptable generalization and efficient expansion performance through increasing the neural nodes dynamically. Herein, this inspires us to bring a forward solution which incorporates BLS to improve the generalizing ability of FNN.
+Recently, there has been some research concerning the transfer of writing skills between humans and robots, mainly learning from human demonstration (LfD), also known as imitation learning. Imitation learning primarily encompasses three main approaches: teleoperation-based demonstration, kinesthetic demonstration and visual-based demonstration. Teleoperation-based demonstration  allows humans to transfer skills by manipulating a teleoperation joystick. In \cite{Yang2015}, the author utilized a teleoperation system that incorporates a MYO sensor and a Phantom Omni device to transfer the writing skills to robot. However, due to the significant differences between the teleoperation joystick and the writing tools commonly used by humans, the transfer of writing skills is not effective and natural. Kinesthetic demonstration primarily involves dragging the robot's end-effector through manual manipulation and recording the data from the robot's joint motor encoders to transfer the skill. This method has the same problem: not intuitive and does not conform to the natural writing habits of humans. 
 
-As mentioned above, it is innate for humans to adjust the impedance and force of their arms skillfully while interacting with the unknown environments. From a biological point of view, humans can adapt their endpoint impedance of limbs through the central nervous system to achieve compliant interaction. Therefore, it would be crucial and significant to control robot in such way for a variety of social applications such as health care, assembly line and human-robot collaboration. In the literature, significant progress has been made to tackle such related issues. Generally, it is of great importance to establish a desired impedance model for impedance control parameters of which are difficult to choose from in practical. One of the most important parts of impedance control is to determine the desired impedance parameters. Nevertheless, most existing impedance control methods used fixed and manual designed impedance model. In order to improve the performance of compliant interaction under unknown environment, optimization of the impedance model should be taken into consideration. In, a desirable force regulation and tracking performance have been achieved by means of linear quadratic regulator (LQR), which is operated by considering a minimal cost function, to optimize the impedance parameters under a vital precondition of completely known environment dynamics. However, such algorithms seem too conservative to achieve a desired robot-environment interaction since they lack the ability of incorporating the unstructured and dynamic environments. Progress has been made in addressing such problems, and various optimal control schemes in the case of unknown environment have been proposed in literature. It proposed a force sensorless admittance control for robots to tackle with the unknown robot-environment interaction.
+Inspired by the human process of learning to write, visual-based demonstration is a better way for skill transfer, which is more natural and effective. In \cite{Zhang2019}, a system based on CNN has been developed to learn traditional Chinese calligraphy skills. The network is utilized to construct a calligraphy skill calligraphy database and the system incorporates a digitizing tablet to collect handwriting data, which means a considerable amount of demonstration work is required. In \cite{Mees2020}, the Adversarial Skill Networks (ASN) is presented, which can learning skills from the video. However, for writing tasks, the limited availability of suitable writing skill videos poses a challenge for large-scale training. In contrast, the amount of suitable writing images is much larger. It is a more viable option to learn writing skills from images directly.
 
-The main contributions of this article are listed as follows. \cite{Ju2012}.
+In \cite{Zhang2023}, the author proposes a method which can directly learn writing skills from images of English letters. In \cite{Li2021,Li2022,Li2024}, the proposed method can learn writing skills from images of modern Chinese calligraphy. Both of them are based on the eight-neighbor method for extracting the skeleton to obtain the demonstration trajectory, and generalize by Dynamic Movement Primitives (DMP)\cite{Ijspeert2013}. However, they can only learn the motion patterns from the demonstration images, unable to capture the deeper feature, such as the thickness of the strokes. In \cite{Yang2019}, the integration with Gaussian Mixture Model (GMM) expand the learning capabilities of the DMP, enabling it to learn multiple demonstrations simultaneously. In \cite{Yang2019c}, the improvement of Fuzzy Gaussian Mixture Model (FGMM)\cite{Ju2012} enhance the effect further. These methods are capable of learning the deviation among multiple demonstrations, but they are still insufficient for writing tasks that demand high precision in stroke thickness, like traditional Chinese calligraphy. In this paper, we propose an image-based imitation learning framework for robotic writing task, especially for the writing task of the traditional Chinese calligraphy. The main contributions of this article are listed as follows. 
 
 1) We propose a learning method based on DMP and FGMM which can not only learn the trajectory from multiple demonstrations but also learn the deviation among them.
 
@@ -279,6 +278,7 @@ where $D_t$ and $R_t$ represent the eigenvalues and eigenvectors of the covarian
             0                     & D_{22t}
         \end{array}
         \right]
+    \label{eq3}
 \end{equation}
 the new covariance sequence is:
 \begin{equation}
@@ -444,6 +444,43 @@ Assuming the paper size for reproducing the writing skills is half the size of t
 \end{figure}
 
 \subsection{Real-World Experiment}
+In this part, we conducted real-world experiment to validate the effectiveness of the proposed method on the platform represented in Fig.\ref{fig8}.a. The Elite EC66 robot, which is designed to mimic the human arm's anatomy, has six DoF, enabling it to perform a wide range of motion. A webcam is used to capture the demonstration image. To validate the efficacy of DA, we employed the traditional Chinese writing instrument, the brush pen, as the end-effector. This writing instrument controls the thickness of the strokes by varying the height of it. Compared to fountain pens, the brush pen exhibits a higher sensitivity in controlling the stroke thickness. However, due to its minimal stiffness, most of force sensors are unable to obtain effective force information during the writing process. Therefore, the implementation of a vision-based control approach is adopted for the robot, in lieu of force control. The height of the bursh pen is described by a quadratic function of the thickness of its stroke above the writing surface\cite{Guo2022}, indicating a non-linear relationship that can be mathematically expressed as:
+\begin{equation}
+    H_t=-k(D_{t11}^{new})^2+H_0
+\end{equation}
+where $k$ is a positve constants, which is determined by the parameter of the brush pen. $D_{t11}^{new}$ denotes the thickness of strokes calculated by Eq.\ref{eq3}. $H_t$ represents the height of the brush pen above the writing surface in time $t$, which $H_0$ is a constant indicates the initial height. Here the parameter $k$ and $H_0$ are designated as 0.2 and 240, respectively. The writing trajectories are represented in Fig.\ref{fig8}.b, and the real-world experience is represented from Fig.\ref{fig8}.c to Fig.\ref{fig8}.f.
+\begin{figure*}[!t]
+    \centering
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig8a.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=3in]{./fig/fig8b.pdf}
+    }
+    \quad
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig8c.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig8d.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig8e.pdf}
+    }
+    \subfloat[]{
+        \includegraphics[width=1.5in]{./fig/fig8f.pdf}
+    }
+    \caption{The reproduction of writing skill for each stroke.}
+    \label{fig8}
+\end{figure*}
+
+Then the performance of generalization is verified. Giving different sizes of square-grid paper, the robot can adaptively change the reproduction of writing skill, as Fig.\ref{fig9} presents.
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=3in]{./fig/fig9.pdf}
+    \caption{The reproduction}
+    \label{fig9}
+\end{figure}
 
 \section{Conclusion}
 \bibliographystyle{IEEEtran}
