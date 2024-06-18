@@ -21,11 +21,16 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{Yang2015}
-C.~Yang, S.~Chang, P.~Liang, Z.~Li, and C.-Y. Su, ``Teleoperated robot writing
-  using emg signals,'' in \emph{2015 IEEE International Conference on
-  Information and Automation}.\hskip 1em plus 0.5em minus 0.4em\relax Lijiang,
-  China: IEEE, 2015, pp. 2264--2269.
+\bibitem{Lu2024}
+Z.~Lu, W.~Si, N.~Wang, and C.~Yang, ``Dynamic movement primitives-based human
+  action prediction and shared control for bilateral robot teleoperation,''
+  \emph{IEEE Transactions on Industrial Electronics}, pp. 1--10, 2024.
+
+\bibitem{Dong2023a}
+J.~Dong, W.~Si, N.~Wang, and C.~Yang, ``Robot learning from multiple
+  demonstrations based on generalized gaussian mixture model,'' in \emph{2023
+  28th International Conference on Automation and Computing (ICAC)}, 2023, pp.
+  1--6.
 
 \bibitem{Zhang2019}
 X.~Zhang, Y.~Li, Z.~Zhang, K.~Konno, and S.~Hu, ``Intelligent chinese
@@ -81,13 +86,37 @@ C.~Yang, C.~Chen, N.~Wang, Z.~Ju, J.~Fu, and M.~Wang, ``Biologically inspired
 Z.~Ju and H.~Liu, ``Fuzzy gaussian mixture models,'' \emph{Pattern
   Recognition}, vol.~45, no.~3, pp. 1146--1158, 2012.
 
+\bibitem{Chen2020a}
+R.~Chen, Y.~Bai, Y.~Zhao, Z.~Chen, and T.~Sheng, ``Safe proximity operation to
+  rotating non-cooperative spacecraft with complex shape using gaussian mixture
+  model-based fixed-time control,'' \emph{Applied Sciences}, vol.~10, no.~17,
+  p. 5986, 2020.
+
+\bibitem{Chen2021a}
+D.~Chen, G.~Li, D.~Zhou, and Z.~Ju, ``A novel curved gaussian mixture model and
+  its application in motion skill encoding,'' in \emph{2021 IEEE/RSJ
+  International Conference on Intelligent Robots and Systems (IROS)}.\hskip 1em
+  plus 0.5em minus 0.4em\relax Prague, Czech Republic: IEEE, 2021, pp.
+  7813--7818.
+
+\bibitem{Mei2023}
+G.~Mei, F.~Poiesi, C.~Saltori, J.~Zhang, E.~Ricci, and N.~Sebe,
+  ``Overlap-guided gaussian mixture models for point cloud registration,'' in
+  \emph{Proceedings of the IEEE/CVF Winter Conference on Applications of
+  Computer Vision}, 2023, pp. 4511--4520.
+
 \bibitem{Zhang2005}
 B.~Zhang, C.~Zhang, and X.~Yi, ``Active curve axis gaussian mixture models,''
   \emph{Pattern Recognition}, vol.~38, no.~12, pp. 2351--2362, 2005.
 
-\bibitem{Guo2022}
-D.~Guo, L.~Ye, G.~Yan, and H.~Min, ``Ccd-bsm:composite-curve-dilation brush
-  stroke model for robotic chinese calligraphy,'' \emph{Applied Intelligence},
-  2022.
+\bibitem{Zhang2020}
+Y.~Zhang and C.~Yang, ``Automatic regrouping of trajectories based on
+  classification and regression tree,'' \emph{International Journal of
+  Modelling, Identification and Control}, vol.~35, no.~3, pp. 217--225, 2020.
+
+\bibitem{Luo2023}
+J.~Luo, W.~Liu, W.~Qi, J.~Hu, J.~Chen, and C.~Yang, ``A vision-based virtual
+  fixture with robot learning for teleoperation,'' \emph{Robotics and
+  Autonomous Systems}, vol. 164, p. 104414, 2023.
 
 \end{thebibliography}
