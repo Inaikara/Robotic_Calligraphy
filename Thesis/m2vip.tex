@@ -29,7 +29,7 @@ cyang@ieee.org}
 }
 \maketitle
 \begin{abstract}
-In the realm of robotics, the capability to perform intricate tasks such as writing has been a significant milestone, reflecting the advancement in human-robot skill transfer technologies. This paper presents an image-based imitation learning framework tailored for robotic writing tasks, with a particular focus on traditional Chinese calligraphy. The proposed system transcends conventional learning methods by introducing a novel learning approach that combines Dynamic Movement Primitives (DMP) with Fuzzy Gaussian Mixture Model (FGMM), enabling the robot to learn not only the trajectory from multiple demonstrations but also the subtle deviations among them. A unique learning from demonstration (LfD) method is introduced, allowing skill transfer through a single static image, where each sample point is encoded by a prior trajectory and FGMM. The framework also incorporates a method for generating a priori trajectories of Chinese characters and a robot learning system for writing skills acquisition. Experiments conducted on the LASA dataset and Chinese character images substantiate the effectiveness of the proposed method, showcasing the system's proficiency in capturing the nuances of writing, including stroke thickness and direction, and its ability to generalize skills across various contexts. The paper contributes to the field by offering a more natural, effective, and generalized approach to robotic writing, thereby bridging the gap between human writing skills and robotic replication.
+
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -50,23 +50,8 @@ In \cite{Zhang2023}, the author proposes a method which can directly learn writi
 2) We present a new LfD method which can demonstrate by a single static image, each sample point on the image is encoded by a prior trajectory and FGMM. The skills are then learnt through the proposed methods.
 
 3) We give a method for generating a priori trajectories of Chinese characters and design a robot learning framework for learning to write. Experiments were carried out on the LASA dataset and Chinese character images to verify the effectiveness of the method.
-\begin{figure*}[!t]
-    \centering
-    \includegraphics[width=6in]{./fig/fig1.pdf}
-    \caption{Block diagram of the proposed system.}
-    \label{fig1}
-\end{figure*}
 
-\section{Methodology}
-\subsection{System Description}
-The block diagram presented in Fig. \ref{fig1} illustrates the framework of the imitation learning system for robotic handwriting tasks. The system can learn skills from static images and prior trajectories, particularly focusing on the deviation information within them, and ultimately achieving skill generalization in various environments. The entire system encompasses three aspects:
-
-1)~Image Demonstration: The demonstration part transfers the writing skill to the robot through the character image written by a human. The proposed system enables robot learning parameters of FGMM from a static image. On the other hand, the priori information of time is attained by the priori trajectories, which explicitly show the implicit time information in the image.
-
-2)~Skill Learning: With the parameters estimated in the previous part, we can encode the writing skill through GMR. The normal GMR method can generate the trajectory very well. However, the effect of learning the deviation among samples in the image is not that good. Therefore, we proposed a novel approach called deviation analysis to enhance the deviation learning ability of GMR.
-
-3)~Motion Generalization: It is common to adjust the generalization effect of writing skills in different situations, like changing the size of the written font to adapt the various types of papers in the real world. DMP is used to make the skill have great generalization performance. DMP can encode not only the trajectory but also the end-effector orientation.
-
+\section{Preliminaries}
 \subsection{Fuzzy Gaussian Mixture Model}
 Gaussian Mixture Models have been widely applied in various fitting scenarios. However, due to the linearity of the axes in GMM, more components are required to fit nonlinear data. Paper \cite{Ju2012} introduce a modified GMM called Fuzzy Gaussian Mixture Model (FGMM). It combines the conventional GMM with Active curve axis Gaussian mixture models (AcaG)\cite{Zhang2005} and introduces a dissimilarity function to accelerate convergence. Fig. \ref{fig2} represents the data transformation process of FGMM.
 \begin{figure}[!t]
@@ -88,69 +73,20 @@ Gaussian Mixture Models have been widely applied in various fitting scenarios. H
     \label{fig2}
 \end{figure}
 
-$X=\{x_1,\hdots,x_N\}$ is a $d$-dimensional observed dataset with $N$ vectors. Normally, we assumed that the distribution of $X$ is based on the mixture Gaussian distribution, which the following equation can represent:
-\begin{equation}
-    p(x_n|\mu,\Sigma)=\sum\limits^K_{i=1}\alpha_i p_i(x_n|\mu_i,\Sigma_i)
-\end{equation}
-where $x_n$ is a $d$-dimensional vector and $\alpha_i$, $\mu_i$, $\Sigma_i$ mean the $i^{th}$ Gaussian component's weight, mean and variance respectively. $K$ is a pre-set parameter representing the number of Gaussian components. However, the data with nonlinear characteristics do not fit this assumption well, like the data presented in Fig.\ref{fig2}a. AcaGMM introduces non-linear factors to the conventional GMM. In the following part, we introduce the definition and parameter estimation process of AcaGMM.
-
 First, the k-means algorithm divides the dataset into $K$ classes. For each class of data, we transfer them to a new coordinate through PCA (Principal Component Analysis) :
 \begin{equation}
     Y_i=Q_i \times (X_i-T_i)
 \end{equation}
-where $Q_i$ and $T_i$ denote the rotation matrix and translation vectors. $X_i$ is data which belongs to the $i^{th}$ components. The transformed data $Y_i$ presented in Fig.\ref{fig2}b have zero mean, and their principal axis aligns with the transformed x-axis. Noticed that we assume all data are two-dimensional in this paper. The LSFM (least-squares fitting method) is used to fit the data using a parabolic curve, which is defined as:
-\begin{equation}
-    y=cx^2+b
-\end{equation}
-where $c$ denotes the curvature of data and $b$ is the bias. Assuming all data satisfies the parabolic equation, the linear function can be written as:
-\begin{equation}
-    \left[
-        \begin{array}{c}
-            (y_1)^2 \\
-            (y_2)^2 \\
-            \vdots  \\
-            (y_n)^2 \\
-        \end{array}
-        \right]=
-    \left[
-        \begin{array}{cc}
-            (x_1)^2 & 1      \\
-            (x_2)^2 & 1      \\
-            \vdots  & \vdots \\
-            (x_n)^2 & 1      \\
-        \end{array}
-        \right]
-    \left[
-        \begin{array}{c}
-            c \\
-            b \\
-        \end{array}
-        \right]
-\end{equation}
-where the equation can be written as $Y=XC_i$. The least-squares solution is $C_i=(X^{\mathrm{T}}X)^{\dagger}X^{\mathrm{T}}Y$, where $\dagger$ means Moore–Penrose pseudoinverse. For components with small values of $c$, they can be degenerated into a conventional GMM:
-\begin{equation}
-    y=\left\{
-    \begin{aligned}
-         & b      & (|c|<\epsilon) \\
-         & cx^2+b & (|c|>\epsilon) \\
-    \end{aligned}
-    \right.
-\end{equation}
-where $\epsilon$ is a small positive number. If $|c|$ is smaller than $\epsilon$, the principal axis can be approximated as a straight line, and the component can be seen as a conventional GMM component.  Otherwise, if  $|c|$  is bigger than $\epsilon$, the component can be considered as an AcaGMM component.
+where $Q_i$ and $T_i$ denote the rotation matrix and translation vectors. $X_i$ is data which belongs to the $i^{th}$ components. The transformed data $Y_i$ presented in Fig.\ref{fig2}b have zero mean, and their principal axis aligns with the transformed x-axis. Noticed that we assume all data are two-dimensional in this paper.
 
-AcaGMM uses the projection point on the parabolic curve to replace the sample point for calculating the posterior probability. First, the distance between a sample point $\{x_{1t},x_{2t}\}$ and its projection point $\{z_{1},z_{2}\}$ satisfies:
+The LSFM (least-squares fitting method) is used to fit the data using a parabolic curve. AcaGMM uses the projection point on the parabolic curve to replace the sample point for calculating the posterior probability. First, the distance between a sample point $\{x_{1t},x_{2t}\}$ and its projection point $\{z_{1},z_{2}\}$ satisfies:
 \begin{equation}
     \begin{aligned}
         d^2 & =(z_{1}-x_{1n})^2+(z_{2}-x_{2n})^2 \\
         z_2 & =cz_1^2+b
     \end{aligned}
 \end{equation}
-
-The Lagrange method is used to find the closest projection point:
-\begin{equation}
-    2c^2z_1^3+(2bc-2cx_{2n}+1)z_1-x_{1n}=0
-\end{equation}
-the cubic function may have multiple solutions, which means a sample may have multiple projection points with the shortest distance. Then we calculate the arc length of the $j^{th}$ projection points $\{z_{1j},z_{2j}\}$:
+the Lagrange method is used to find the closest projection point. The cubic function may have multiple solutions, which means a sample may have multiple projection points with the shortest distance. Then we calculate the arc length of the $j^{th}$ projection points $\{z_{1j},z_{2j}\}$:
 \begin{equation}
     l_{1j}=\int_{(0,b)}^{(z_{1j},z_{2j})}\sqrt{(dz_{1j})^2+(dz_{2j})^2}
 \end{equation}
@@ -162,7 +98,7 @@ and the distance between $x_t$ and $z_j$ is:
 \begin{equation}
     l_{2j}=\sqrt{(x_{1t}-z_{1j})^2+(x_{2t}-z_{2j})^2}
 \end{equation}
-where fig \ref{fig2}c illustrates the geometric meaning of $l_{1j}$ and $l_{2j}$.
+where Fig\ref{fig2}.c illustrates the geometric meaning of $l_{1j}$ and $l_{2j}$.
 
 Then we can calculate the probability of the sample $x_t$ via the sum of its projection points $z_j$:
 \begin{equation}
@@ -202,6 +138,57 @@ and $\Sigma_i$ can be estimated from:
 where $L_{1n}$ denotes the mean arc length of $x_n$'s projection points, and $L_{2n}$ means the average distance between $x_n$ and its projection points. It can be considered that samples $X_n$ undergoes a non-linear transformation to obtain $L_n=\{L_{1n},L_{2n}\}$, presented in Fig.\ref{fig2}d. $L_n$ satisfied the distribution of the conventional zero-mean Gaussian.
 
 The above step represents a single iteration of the EM algorithm. Repeat the iteration and update the parameters until the relative difference of log-likelihood between two iterations is less than a preset threshold. FGMM introduces an FCMs (Fuzzy C-means) mechanism to accelerate the convergence speed of the EM algorithm.
+
+\subsection{Dynamic Movement Primitive}
+To enable the proposed method to adapt to writing tasks in different environments, the DMP is combined into the designed skill learning framework. The DMP is a LfD model based on dynamic systems\cite{Ijspeert2013}. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
+\begin{equation}
+    \ddot y = \alpha(\beta(g-y)-\dot y) + f
+    \label{eq4}
+\end{equation}
+
+To change the trajectory speed, a scaling term $\tau$ is added in front of the velocity variable $\dot y$:
+\begin{equation}
+    \tau^2 \ddot y = \alpha(\beta(g-y)-\tau \dot y) + f
+\end{equation}
+
+To decouple the non-linear equation from time, a canonical system $x(t)$ is used to drive the dynamic system:
+\begin{equation}
+    \tau \dot x = - \kappa x
+\end{equation}
+
+The first term in Eq.\ref{eq4} is a PD (Proportional-Derivative) system. To avoid overshooting and ensure stable convergence to the attractor, let the parameter $\beta = \alpha / 4$, rewriting the second-order dynamic system as a critically stable spring-damping system. The system ultimately converges stably to the position $g$. The second term $f$ in Eq.\ref{eq4} is a non-linear function that controls the intermediate process of convergence. The non-linear function $f$ can be expressed as:
+\begin{equation}
+    f(x)=\frac{\sum\limits_{i=1}^{N} \Psi_{i}(x) w_{i}}{\sum\limits_{i=1}^{N} \Psi_{i}(x)}x(t)(g-y)
+    \label{eq5}
+\end{equation}
+where, $\Psi(t)$ is a Radial Basis Function (RBF), expressed as:
+\begin{equation}
+    \Psi_i(x)= \exp \left(-\frac{\left(x-\mu_i \right)^{2}}{2 \sigma_i^{2}}\right)
+\end{equation}
+where $N$ represents the number of RBF, $\mu_i$ represents the position of the $i^{th}$ basis function, and $\sigma_i$ represents the width of the $i^{th}$ basis function. $\omega_i$ represents the weight of the $i^{th}$ radial basis function, which needs to be obtained by learning from the demonstration trajectory. Given a demonstration trajectory, here we used the trajectory $y_{dms}=\mathcal{F}' _{gmr}(t)$ obtained by GMR, the expression for $f_{dms}$ can be derived from Eq.\ref{eq4}:
+\begin{equation}
+    f_{dms} = \tau^2 \ddot y_{dms} - \alpha(\beta (g-y_{dms})-\tau \dot y_{dms})
+    \label{eq6}
+\end{equation}
+where Locally Weighted Regression (LWR) is used to determining the weight parameter $w_{i}$, which can control the $f(x)$ to fit $f_{dms}$.
+
+\section{Methodology}
+\subsection{System Description}
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=6in]{./fig/fig1.pdf}
+    \caption{Block diagram of the proposed system.}
+    \label{fig1}
+\end{figure*}
+The block diagram presented in Fig. \ref{fig1} illustrates the framework of the imitation learning system for robotic handwriting tasks. The system can learn skills from static images and prior trajectories, particularly focusing on the deviation information within them, and ultimately achieving skill generalization in various environments. The entire system encompasses three aspects:
+
+1)~Image Demonstration: The demonstration part transfers the writing skill to the robot through the character image written by a human. The proposed system enables robot learning parameters of FGMM from a static image. On the other hand, the priori information of time is attained by the priori trajectories, which explicitly show the implicit time information in the image.
+
+2)~Skill Learning: With the parameters estimated in the previous part, we can encode the writing skill through GMR. The normal GMR method can generate the trajectory very well. However, the effect of learning the deviation among samples in the image is not that good. Therefore, we proposed a novel approach called deviation analysis to enhance the deviation learning ability of GMR.
+
+3)~Motion Generalization: It is common to adjust the generalization effect of writing skills in different situations, like changing the size of the written font to adapt the various types of papers in the real world. DMP is used to make the skill have great generalization performance. DMP can encode not only the trajectory but also the end-effector orientation.
+
+
 
 \subsection{Time Encoding}
 Traditional vision-based demonstrations are mostly obtained by recording motion sequences to acquire demonstration trajectories. Data usually contains time sequences, and time-driven methods like GMR and DMP are used for motion encoding and skill learning. However, in some scenarios, the time sequence of demonstration trajectories is missing, like demonstrating writing skills through an image. A new method based on FGMM is proposed for encoding the time series of demonstration trajectories.
@@ -283,38 +270,7 @@ the new covariance sequence is:
     \Sigma^{new}_t=R_tD^{new}_tR_t^{-1}
 \end{equation}
 
-\subsection{Dynamic Movement Primitive}
-To enable the proposed method to adapt to writing tasks in different environments, the DMP is combined into the designed skill learning framework. The DMP is a LfD model based on dynamic systems\cite{Ijspeert2013}. It consists of a second-order dynamic system and a non-linear function, allowing it to encode motion trajectories with fewer parameters while maintaining stability. For the encoded trajectory, modifying the positions of the starting and ending points can also retain the original motion characteristics:
-\begin{equation}
-    \ddot y = \alpha(\beta(g-y)-\dot y) + f
-    \label{eq4}
-\end{equation}
 
-To change the trajectory speed, a scaling term $\tau$ is added in front of the velocity variable $\dot y$:
-\begin{equation}
-    \tau^2 \ddot y = \alpha(\beta(g-y)-\tau \dot y) + f
-\end{equation}
-
-To decouple the non-linear equation from time, a canonical system $x(t)$ is used to drive the dynamic system:
-\begin{equation}
-    \tau \dot x = - \kappa x
-\end{equation}
-
-The first term in Eq.\ref{eq4} is a PD (Proportional-Derivative) system. To avoid overshooting and ensure stable convergence to the attractor, let the parameter $\beta = \alpha / 4$, rewriting the second-order dynamic system as a critically stable spring-damping system. The system ultimately converges stably to the position $g$. The second term $f$ in Eq.\ref{eq4} is a non-linear function that controls the intermediate process of convergence. The non-linear function $f$ can be expressed as:
-\begin{equation}
-    f(x)=\frac{\sum\limits_{i=1}^{N} \Psi_{i}(x) w_{i}}{\sum\limits_{i=1}^{N} \Psi_{i}(x)}x(t)(g-y)
-    \label{eq5}
-\end{equation}
-where, $\Psi(t)$ is a Radial Basis Function (RBF), expressed as:
-\begin{equation}
-    \Psi_i(x)= \exp \left(-\frac{\left(x-\mu_i \right)^{2}}{2 \sigma_i^{2}}\right)
-\end{equation}
-where $N$ represents the number of RBF, $\mu_i$ represents the position of the $i^{th}$ basis function, and $\sigma_i$ represents the width of the $i^{th}$ basis function. $\omega_i$ represents the weight of the $i^{th}$ radial basis function, which needs to be obtained by learning from the demonstration trajectory. Given a demonstration trajectory, here we used the trajectory $y_{dms}=\mathcal{F}' _{gmr}(t)$ obtained by GMR, the expression for $f_{dms}$ can be derived from Eq.\ref{eq4}:
-\begin{equation}
-    f_{dms} = \tau^2 \ddot y_{dms} - \alpha(\beta (g-y_{dms})-\tau \dot y_{dms})
-    \label{eq6}
-\end{equation}
-where Locally Weighted Regression (LWR) is used to determining the weight parameter $w_{i}$, which can control the $f(x)$ to fit $f_{dms}$.
 
 \section{Experiments}
 \subsection{Simulation}
