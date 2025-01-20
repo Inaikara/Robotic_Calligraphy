@@ -1,4 +1,3 @@
-
 function [bihua] = Seq(bihua_1)
 
 max_x = max(bihua_1(:,1));
